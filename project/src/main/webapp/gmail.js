@@ -157,8 +157,30 @@ function addRandomGreeting() {
     //     });
     // }
 
+    async function keywordExtraction(userInput) {
+    var result = "";
+    var count = 0;
+    var searchQuery = userInput.split(" ");
+    for (word of searchQuery){
+        if ((searchQuery.length-1) == count && word.indexOf('?') != -1) {
+                word = word.substring(0, word.length-1);
+            }
+        var url = new URL("https://api.datamuse.com/words?md=p&sp=" + word + "&max=1");
+        const output = await fetch(url).then(response => response.text());
+        if (output.includes("[\"n\"]") == true || output.includes("[\"adj\"]") == true){
+            result += word;
+            if (count != (searchQuery.length-1)){
+                result += " ";
+            }
+        }
+        count++;
+    }
+    return result; 
+    }
+    
     //Retrieve messages using hardcoded queries and the signed-in email.
-    function listMessages() {
+    async function listMessages() {
+        const extraction = await keywordExtraction("When is the Technical Interview Prep Workshop?");
         var getPageOfMessages = function(request, result) {
             request.execute(function(resp) {
                 result = result.concat(resp.messages);
@@ -167,7 +189,7 @@ function addRandomGreeting() {
                     request = gapi.client.gmail.users.messages.list({
                     'userId': 'me',
                     'pageToken': nextPageToken,
-                    'q': 'Google Interview'
+                    'q': extraction
                 });
                 getPageOfMessages(request, result);
                 } else {
@@ -175,20 +197,32 @@ function addRandomGreeting() {
                         const messageRequest = gapi.client.gmail.users.messages.get({
                             'userId': 'me',
                             'id': result[i].id,
-                            'format': "full"
+                            'format': "raw"
                         });
-                        console.log(messageRequest);
+                        messageRequest.execute(response => {
+                            const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/')); 
+                            const emailStart = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
+                            const emailEnd = (decodedEmail.substring(emailStart)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
+                            const emailBody = decodedEmail.substring(emailStart, emailStart+emailEnd);
+                            //console.log(decodedEmail);
+                            console.log(emailBody);
+                            console.log(response);
+                        });
                     }
                     console.log(result)
                     }
                 });
             };
+            console.log(extraction);
+            console.log(typeof extraction);
             var initialRequest = gapi.client.gmail.users.messages.list({
             'userId': 'me',
-            'q': 'Google Interview'
+            'q': extraction
         });
         getPageOfMessages(initialRequest, []);
     }
+
+    
 
 /**
  * Get Message with given ID.
