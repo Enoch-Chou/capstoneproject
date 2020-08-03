@@ -109,53 +109,6 @@ function addRandomGreeting() {
         pre.appendChild(textContent);
     }
 
-    /**
-      * Print all Labels in the authorized user's inbox. If no labels
-      * are found an appropriate message is printed.
-      */
-    // function listLabels() {
-    //     const t0 = performance.now();
-    //     gapi.client.gmail.users.labels.list({
-    //       'userId': 'me'
-    //     }).then(function(response) {
-    //         var labels = response.result.labels;
-    //         appendPre('Labels:');
-
-    //         if (labels && labels.length > 0) {
-    //             for (i = 0; i < labels.length; i++) {
-    //             var label = labels[i];
-    //             appendPre(label.name);
-    //             console.log(label.name);
-    //             }
-    //         } else {
-    //             appendPre('No Labels found.');
-    //         }
-    //     const t1 = performance.now();
-    //     console.log(t1-t0);
-    //     });
-    // }
-
-    // function listMessages() {
-    //     const t0 = performance.now();
-    //     gapi.client.gmail.users.messages.list({
-    //       'userId': 'me'
-    //     }).then(function(response) {
-    //         var messages = response.result.messages;
-    //         //appendPre('Messages:');
-
-    //         if (messages && messages.length > 0) {
-    //             for (i = 0; i < messages.length; i++) {
-    //             var message = messages[i];
-    //             //appendPre(message.name);
-    //             console.log(message.name);
-    //             }
-    //         } else {
-    //             appendPre('No Messages found.');
-    //         }
-    //     const t1 = performance.now();
-    //     console.log(t1-t0);
-    //     });
-    // }
 
     async function keywordExtraction(userInput) {
     var result = "";
