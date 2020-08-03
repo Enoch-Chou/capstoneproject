@@ -170,7 +170,6 @@ function addRandomGreeting() {
                             if (emailBodyValue.indexOf("format=flowed") == -1 && emailDateValue.length > 1) {
                                 list[list.length] = emailObject;
                             }
-                            console.log(decodedEmail);
                         });
                     }
                     }
