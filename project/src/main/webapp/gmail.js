@@ -180,7 +180,8 @@ function addRandomGreeting() {
     
     //Retrieve messages using hardcoded queries and the signed-in email.
     async function listMessages() {
-        const extraction = await keywordExtraction("When is the Technical Interview Prep Workshop?");
+        const t0 = performance.now();
+        var list = [];
         var getPageOfMessages = function(request, result) {
             request.execute(function(resp) {
                 result = result.concat(resp.messages);
@@ -189,7 +190,7 @@ function addRandomGreeting() {
                     request = gapi.client.gmail.users.messages.list({
                     'userId': 'me',
                     'pageToken': nextPageToken,
-                    'q': extraction
+                    'q': "When is the Interview Prep Workshop?"
                 });
                 getPageOfMessages(request, result);
                 } else {
@@ -199,27 +200,40 @@ function addRandomGreeting() {
                             'id': result[i].id,
                             'format': "raw"
                         });
+                        var messageID = result[i].id;
                         messageRequest.execute(response => {
                             const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/')); 
-                            const emailStart = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
-                            const emailEnd = (decodedEmail.substring(emailStart)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
-                            const emailBody = decodedEmail.substring(emailStart, emailStart+emailEnd);
-                            //console.log(decodedEmail);
-                            console.log(emailBody);
-                            console.log(response);
+                            const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
+                            const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
+                            const emailBodyValue = decodedEmail.substring(emailBodyStartIndex, emailBodyStartIndex+emailBodyEndIndex);
+                            const emailDateStartIndex = decodedEmail.indexOf("Date:");
+                            const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
+                            var emailDateValue = decodedEmail.substring(emailDateStartIndex, emailDateStartIndex+emailDateEndIndex);
+                            if (emailDateValue.indexOf("X-Notifications") != -1) {
+                                emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
+                            }
+                            var emailObject = {};
+                            emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue}; 
+                            if (emailBodyValue.indexOf("format=flowed") == -1 && emailDateValue.length > 1) {
+                                list[list.length] = emailObject;
+                            }
+                            console.log(decodedEmail);
+                            //console.log(emailObject);
+                            //console.log(response);
                         });
                     }
-                    console.log(result)
+                    //console.log(result)
                     }
                 });
             };
-            console.log(extraction);
-            console.log(typeof extraction);
+            console.log(list);
             var initialRequest = gapi.client.gmail.users.messages.list({
             'userId': 'me',
-            'q': extraction
+            'q': "When is the interview prep workshop?"
         });
         getPageOfMessages(initialRequest, []);
+        const t1 = performance.now();
+        console.log(t1-t0);
     }
 
     
