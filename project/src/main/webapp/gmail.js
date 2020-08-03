@@ -171,11 +171,8 @@ function addRandomGreeting() {
                                 list[list.length] = emailObject;
                             }
                             console.log(decodedEmail);
-                            //console.log(emailObject);
-                            //console.log(response);
                         });
                     }
-                    //console.log(result)
                     }
                 });
             };
