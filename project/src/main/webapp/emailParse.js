@@ -14,11 +14,16 @@
 var model;
 function getModel()
 {
+    var modelLoadReady = document.getElementById("modelLoad");
+    modelLoadReady.innerHTML = 'Loading Model...';
     console.time("Model Load");
     qna.load().then(loadedModel => {
         model = loadedModel;
         console.timeEnd("Model Load");
+        
+        modelLoadReady.innerHTML = 'Model Ready';
     });
+    
 }
 
 function parseEmailsWithModel()
@@ -48,12 +53,13 @@ function parseEmailsWithModel()
             console.log("nonEmpty", nonEmpty);
             console.log("highest confidence", orderedConfidence);
             console.log("final answer: ", MLDictAnswer["answer"]);
+            var answer = document.getElementById("answer");
+            answer.innerHTML = MLDictAnswer["answer"];
             console.timeEnd("Using Promises Test");
         }
     });   
 }
 
-//Parse through email dictionary to grab all the email bodies into 1 array
 function listOfPassages(exampleDict)
 {
     var allPass = [];
