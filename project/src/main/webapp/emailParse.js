@@ -36,16 +36,24 @@ function parseEmailsWithModel()
     );
     Promise.all(promises).then((values) => {
         var nonEmpty = ridOfEmptyArrays(values,allPass);
-        var orderedConfidence = highestConfidence(nonEmpty);
-        var MLDictAnswer = nonEmpty.get(orderedConfidence);
-        console.log("original",values);
-        console.log("nonEmpty", nonEmpty);
-        console.log("highest confidence", orderedConfidence);
-        console.log("final answer: ", MLDictAnswer["answer"]);
-        console.timeEnd("Using Promises Test");
+        if (nonEmpty.size == 0)
+        {
+            console.log("No Answer Available");
+        }
+        else
+        {
+            var orderedConfidence = highestConfidence(nonEmpty);
+            var MLDictAnswer = nonEmpty.get(orderedConfidence);
+            console.log("original",values);
+            console.log("nonEmpty", nonEmpty);
+            console.log("highest confidence", orderedConfidence);
+            console.log("final answer: ", MLDictAnswer["answer"]);
+            console.timeEnd("Using Promises Test");
+        }
     });   
 }
 
+//Parse through email dictionary to grab all the email bodies into 1 array
 function listOfPassages(exampleDict)
 {
     var allPass = [];
