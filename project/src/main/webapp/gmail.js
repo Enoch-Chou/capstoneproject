@@ -156,10 +156,12 @@ function addRandomGreeting() {
                             }
                             //var emailObject = {};
                             //emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue}; 
-                            if (emailBodyValue.indexOf("format=flowed") == -1 && emailDateValue.length > 1 && emailBodyValue.indexOf("Daily Insider" == -1)) {
+                            if (emailBodyValue.indexOf("format=flowed") == -1 && emailDateValue.length > 1 && emailBodyValue.indexOf("Daily Insider") == -1) {
                                 emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue};
                                 list[list.length] = emailObject;
                             }
+                            //console.log(emailBodyValue.indexOf())
+                            //console.log(emailBodyValue);
                             //console.log(decodedEmail);
                             //arrayList = list;
                             totalObjects = emailObject;
