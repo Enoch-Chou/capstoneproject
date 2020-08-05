@@ -77,6 +77,7 @@ function addRandomGreeting() {
             signoutButton.style.display = 'block';
             // getMessage();
             listMessages();
+            getList();
         }   else {
             authorizeButton.style.display = 'block';
             signoutButton.style.display = 'none';
@@ -109,32 +110,14 @@ function addRandomGreeting() {
         pre.appendChild(textContent);
     }
 
-
-    async function keywordExtraction(userInput) {
-    var result = "";
-    var count = 0;
-    var searchQuery = userInput.split(" ");
-    for (word of searchQuery){
-        if ((searchQuery.length-1) == count && word.indexOf('?') != -1) {
-                word = word.substring(0, word.length-1);
-            }
-        var url = new URL("https://api.datamuse.com/words?md=p&sp=" + word + "&max=1");
-        const output = await fetch(url).then(response => response.text());
-        if (output.includes("[\"n\"]") == true || output.includes("[\"adj\"]") == true){
-            result += word;
-            if (count != (searchQuery.length-1)){
-                result += " ";
-            }
-        }
-        count++;
-    }
-    return result; 
-    }
-    
+    var question = "When is my current Google Interview?";
+    var arrayList = [];
+    var totalObjects = {};
     //Retrieve messages using hardcoded queries and the signed-in email.
     async function listMessages() {
+        var list=[];
+        var emailObject={};
         const t0 = performance.now();
-        var list = [];
         var getPageOfMessages = function(request, result) {
             request.execute(function(resp) {
                 result = result.concat(resp.messages);
@@ -143,7 +126,7 @@ function addRandomGreeting() {
                     request = gapi.client.gmail.users.messages.list({
                     'userId': 'me',
                     'pageToken': nextPageToken,
-                    'q': "When is the Interview Prep Workshop?"
+                    'q': "Google Interview"
                 });
                 getPageOfMessages(request, result);
                 } else {
@@ -153,8 +136,10 @@ function addRandomGreeting() {
                             'id': result[i].id,
                             'format': "raw"
                         });
-                        var messageID = result[i].id;
+                        //var messageID = result[i].id;
+                        //console.log(messageID);
                         messageRequest.execute(response => {
+                            //convert to from base64 encoding to text
                             const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/')); 
                             const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
                             const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
@@ -162,27 +147,47 @@ function addRandomGreeting() {
                             const emailDateStartIndex = decodedEmail.indexOf("Date:");
                             const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
                             var emailDateValue = decodedEmail.substring(emailDateStartIndex, emailDateStartIndex+emailDateEndIndex);
+                            const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
+                            const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
+                            var messageID = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
+                            //console.log(decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex));
                             if (emailDateValue.indexOf("X-Notifications") != -1) {
                                 emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
                             }
-                            var emailObject = {};
-                            emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue}; 
-                            if (emailBodyValue.indexOf("format=flowed") == -1 && emailDateValue.length > 1) {
+                            //var emailObject = {};
+                            //emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue}; 
+                            if (emailBodyValue.indexOf("format=flowed") == -1 && emailDateValue.length > 1 && emailBodyValue.indexOf("Daily Insider" == -1)) {
+                                emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue};
                                 list[list.length] = emailObject;
                             }
+                            //console.log(decodedEmail);
+                            //arrayList = list;
+                            totalObjects = emailObject;
+                            //console.log(decodedEmail);
+                            console.log(totalObjects);
+                            //console.log(list);
+                            const t1 = performance.now();
+                            console.log(t1-t0);
                         });
                     }
                     }
                 });
             };
-            console.log(list);
+            //console.log(list);
+            //const t1 = performance.now();
+            //console.log(t1-t0);
             var initialRequest = gapi.client.gmail.users.messages.list({
             'userId': 'me',
-            'q': "When is the interview prep workshop?"
+            'q': "Google Interview"
         });
         getPageOfMessages(initialRequest, []);
-        const t1 = performance.now();
-        console.log(t1-t0);
+        //console.log(list);
+        //const t1 = performance.now();
+        //console.log(t1-t0);
+    }
+
+    function getList() {
+        console.log(arrayList);
     }
 
     
@@ -203,3 +208,99 @@ function getMessage(userId, messageId, callback) {
   request.execute(callback);
 }
 
+/*************************************************************************************************************************** Brandon Vu Section*/
+
+
+
+
+
+
+var model;
+function getModel()
+{
+    var modelLoadReady = document.getElementById("modelLoad");
+    modelLoadReady.innerHTML = 'Loading Model...';
+    console.time("Model Load");
+    qna.load().then(loadedModel => {
+        model = loadedModel;
+        console.timeEnd("Model Load");
+        
+        modelLoadReady.innerHTML = 'Model Ready';
+    });
+    
+}
+
+function parseEmailsWithModel()
+{
+    var question = "When is my Microsoft Interview?"
+    var exampleDict = {
+        "12345":{"date": "Some string", "body": "Your Microsoft interview will be held on October 2, 2019 at 01:45 PM Pacific Time (US & Canada)"},
+        "23456":{"date": "Some string", "body": "Arely Miranda González, a Product Manager at YouTube, started Karma Action, a new non-profit organization and webapp"},
+        "34567":{"date": "Some string", "body": "Your microsoft workshop is on Monday 4, 2019."},
+    };
+    var allPass = listOfPassages(totalObjects);
+    console.time("Using Promises Test");
+    const promises =allPass.map(
+        passage => model.findAnswers(question, passage),
+    );
+    Promise.all(promises).then((values) => {
+        var nonEmpty = ridOfEmptyArrays(values,allPass);
+        if (nonEmpty.size == 0)
+        {
+            console.log("No Answer Available");
+        }
+        else
+        {
+            var orderedConfidence = highestConfidence(nonEmpty);
+            var MLDictAnswer = nonEmpty.get(orderedConfidence);
+            console.log("original",values);
+            console.log("nonEmpty", nonEmpty);
+            console.log("highest confidence", orderedConfidence);
+            console.log("final answer: ", MLDictAnswer["answer"]);
+            var answer = document.getElementById("answer");
+            answer.innerHTML = MLDictAnswer["answer"];
+            console.timeEnd("Using Promises Test");
+        }
+    });   
+}
+
+function listOfPassages(exampleDict)
+{
+    var allPass = [];
+    for (var key in exampleDict)
+    {
+        allPass.push(exampleDict[key]["emailBody"]);
+    }
+    return allPass;
+}
+
+function ridOfEmptyArrays(MLvalues,allPass)
+{ 
+    let confidenceWithEmailBody = new Map();
+    for (let i = 0; i < MLvalues.length; i ++)
+    {
+        if (MLvalues[i].length != 0)
+        {  
+            MLAnswer = MLvalues[i][0]["text"];
+            confidenceWithEmailBody.set(MLvalues[i][0]["score"],{"answer":MLAnswer,"emailBody":allPass[i]})
+        }
+    }
+    return confidenceWithEmailBody;
+}
+
+function highestConfidence(answerDict)
+{
+    var confidenceArray = [];
+    for (let key of answerDict.keys())
+    {
+        confidenceArray.push(key);
+    }
+    bestAnswer = confidenceArray.sort(function(a, b){return b - a})
+    return bestAnswer[0];
+}
+
+//test for Jasmine
+module.exports = {
+   nonEmptyArray: nonEmptyArray,
+   highestConfidence: highestConfidence
+};
