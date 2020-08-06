@@ -2,17 +2,26 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <title>Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Load TensorFlow.js. This is required to use the qna model. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load the qna model. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
+    <script type="text/javascript" src="api-key.js"></script>
+    <script type="text/javascript" src="client-id.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=API-KEY&libraries=places"></script>
+    <script src = "script.js"></script>
+    <script src="maps.js"></script>
+    <script src="emailParse.js"></script>
   </head>
-  <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
-    </div>
+  <body onload = "getModel()">
+    <input id = 'query' type = "text" name = "query" />
+    <button onclick="parseEmailsWithModel()">Search</button>
+    <button onclick="initMap()">Display</button>
+    <div id = "displayAnswer"></div>
+    <div id = "type"></div>
+    <div id = "map" style="width: 400px; height: 400px"></div>
   </body>
 </html>
+
