@@ -11,11 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-class modelStatus {
+/** Class to load ML Model and find the best answer using email bodies */
+class mlModelEmailParse {
     constructor() {
         this.model;
     }
+
     loadModel() {
         let modelLoadReady = document.getElementById("modelLoad");
         modelLoadReady.innerHTML = 'Loading Model...';
@@ -26,7 +27,7 @@ class modelStatus {
             modelLoadReady.innerHTML = 'Model Ready';
         });
     }
-
+    /** Parse Email Bodies to apply ML Model using Promises */
     parseEmailsWithModel() {
         //class from Gmail API js file
         const gmail = new gmailAPI();
@@ -38,20 +39,19 @@ class modelStatus {
         const promises = allPass.map(
             passage => model.findAnswers(question, passage),
         );
-        Promise.all(promises).then((values) => {
+        Promise.all(promises).then(values => {
             const nonEmpty = this.ridOfEmptyArrays(values, allPass);
+            const answer = document.getElementById("answer");
             if (nonEmpty.size == 0) {
-                console.log("No Answer Available");
+                answer.innerHTML = "No Answer Available";
             }
             else {
                 const orderedConfidence = this.highestConfidence(nonEmpty);
-                const MLDictAnswer = nonEmpty.get(orderedConfidence);
+                const mlDictAnswer = nonEmpty.get(orderedConfidence);
                 console.log("original", values);
                 console.log("nonEmpty", nonEmpty);
                 console.log("highest confidence", orderedConfidence);
-                console.log("final answer: ", MLDictAnswer["answer"]);
-                const answer = document.getElementById("answer");
-                answer.innerHTML = MLDictAnswer["answer"];
+                answer.innerHTML = mlDictAnswer["answer"];
                 console.timeEnd("Using Promises Test");
             }
         });
@@ -65,13 +65,13 @@ class modelStatus {
         }
         return allPass;
     }
-
-    ridOfEmptyArrays(MLvalues, allPass) {
-        let confidenceWithEmailBody = new Map();
-        for (let i = 0; i < MLvalues.length; i++) {
-            if (MLvalues[i].length != 0) {
-                let MLAnswer = MLvalues[i][0]["text"];
-                confidenceWithEmailBody.set(MLvalues[i][0]["score"], { "answer": MLAnswer, "emailBody": allPass[i] })
+    /** Keep emails that returned an answer from ML model */
+    ridOfEmptyArrays(mlValues, allPass) {
+        const confidenceWithEmailBody = new Map();
+        for (let i = 0; i < mlValues.length; i++) {
+            if (mlValues[i].length != 0) {
+                let mlAnswer = mlValues[i][0]["text"];
+                confidenceWithEmailBody.set(mlValues[i][0]["score"], { "answer": mlAnswer, "emailBody": allPass[i] })
             }
         }
         return confidenceWithEmailBody;
@@ -82,12 +82,12 @@ class modelStatus {
         for (let key of answerDict.keys()) {
             confidenceArray.push(key);
         }
-        let bestAnswer = confidenceArray.sort(function(a, b) { return b - a })
+        let bestAnswer = confidenceArray.sort((a, b) => b - a);
         return bestAnswer[0];
     }
 }
 
-let modelClass = new modelStatus();
+let mlClass = new mlModelEmailParse();
 
 
 //test for Jasmine
