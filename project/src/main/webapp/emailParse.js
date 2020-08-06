@@ -60,7 +60,7 @@ function parseEmailsWithModel()
     });   
 }
 
-function listOfPassages(exampleDict)
+function extractEmailBodiestoArray(exampleDict)
 {
     var allPass = [];
     for (var key in exampleDict)
