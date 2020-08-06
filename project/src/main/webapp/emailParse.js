@@ -11,92 +11,87 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-var model;
-function getModel()
-{
-    var modelLoadReady = document.getElementById("modelLoad");
-    modelLoadReady.innerHTML = 'Loading Model...';
-    console.time("Model Load");
-    qna.load().then(loadedModel => {
-        model = loadedModel;
-        console.timeEnd("Model Load");
-        
-        modelLoadReady.innerHTML = 'Model Ready';
-    });
-    
-}
 
-function parseEmailsWithModel()
-{
-    var question = "When is my Microsoft Interview?"
-    var exampleDict = {
-        "12345":{"date": "Some string", "body": "Your Microsoft interview will be held on October 2, 2019 at 01:45 PM Pacific Time (US & Canada)"},
-        "23456":{"date": "Some string", "body": "Arely Miranda González, a Product Manager at YouTube, started Karma Action, a new non-profit organization and webapp"},
-        "34567":{"date": "Some string", "body": "Your microsoft workshop is on Monday 4, 2019."},
-    };
-    var allPass = listOfPassages(exampleDict);
-    console.time("Using Promises Test");
-    const promises =allPass.map(
-        passage => model.findAnswers(question, passage),
-    );
-    Promise.all(promises).then((values) => {
-        var nonEmpty = ridOfEmptyArrays(values,allPass);
-        if (nonEmpty.size == 0)
-        {
-            console.log("No Answer Available");
-        }
-        else
-        {
-            var orderedConfidence = highestConfidence(nonEmpty);
-            var MLDictAnswer = nonEmpty.get(orderedConfidence);
-            console.log("original",values);
-            console.log("nonEmpty", nonEmpty);
-            console.log("highest confidence", orderedConfidence);
-            console.log("final answer: ", MLDictAnswer["answer"]);
-            var answer = document.getElementById("answer");
-            answer.innerHTML = MLDictAnswer["answer"];
-            console.timeEnd("Using Promises Test");
-        }
-    });   
-}
-
-function extractEmailBodiestoArray(exampleDict)
-{
-    var allPass = [];
-    for (var key in exampleDict)
-    {
-        allPass.push(exampleDict[key]["body"]);
+class modelStatus {
+    constructor() {
+        this.model;
     }
-    return allPass;
-}
+    loadModel() {
+        let modelLoadReady = document.getElementById("modelLoad");
+        modelLoadReady.innerHTML = 'Loading Model...';
+        console.time("Model Load");
+        qna.load().then(loadedModel => {
+            this.model = loadedModel;
+            console.timeEnd("Model Load");
+            modelLoadReady.innerHTML = 'Model Ready';
+        });
+    }
 
-function ridOfEmptyArrays(MLvalues,allPass)
-{ 
-    let confidenceWithEmailBody = new Map();
-    for (let i = 0; i < MLvalues.length; i ++)
-    {
-        if (MLvalues[i].length != 0)
-        {  
-            MLAnswer = MLvalues[i][0]["text"];
-            confidenceWithEmailBody.set(MLvalues[i][0]["score"],{"answer":MLAnswer,"emailBody":allPass[i]})
+    parseEmailsWithModel() {
+        //class from Gmail API js file
+        const gmail = new gmailAPI();
+        const question = gmail.question;
+        const totalObjects = gmail.totalObjects;
+        const model = this.model;
+        const allPass = this.extractEmailBodiestoArray(totalObjects);
+        console.time("Using Promises Test");
+        const promises = allPass.map(
+            passage => model.findAnswers(question, passage),
+        );
+        Promise.all(promises).then((values) => {
+            const nonEmpty = this.ridOfEmptyArrays(values, allPass);
+            if (nonEmpty.size == 0) {
+                console.log("No Answer Available");
+            }
+            else {
+                const orderedConfidence = this.highestConfidence(nonEmpty);
+                const MLDictAnswer = nonEmpty.get(orderedConfidence);
+                console.log("original", values);
+                console.log("nonEmpty", nonEmpty);
+                console.log("highest confidence", orderedConfidence);
+                console.log("final answer: ", MLDictAnswer["answer"]);
+                const answer = document.getElementById("answer");
+                answer.innerHTML = MLDictAnswer["answer"];
+                console.timeEnd("Using Promises Test");
+            }
+        });
+    }
+
+    extractEmailBodiestoArray(exampleDict) {
+        let allPass = [];
+        for (let key in exampleDict) {
+            let body = exampleDict[key]["emailBody"];
+            allPass.push(body.slice(300));
         }
+        return allPass;
     }
-    return confidenceWithEmailBody;
+
+    ridOfEmptyArrays(MLvalues, allPass) {
+        let confidenceWithEmailBody = new Map();
+        for (let i = 0; i < MLvalues.length; i++) {
+            if (MLvalues[i].length != 0) {
+                let MLAnswer = MLvalues[i][0]["text"];
+                confidenceWithEmailBody.set(MLvalues[i][0]["score"], { "answer": MLAnswer, "emailBody": allPass[i] })
+            }
+        }
+        return confidenceWithEmailBody;
+    }
+
+    highestConfidence(answerDict) {
+        let confidenceArray = [];
+        for (let key of answerDict.keys()) {
+            confidenceArray.push(key);
+        }
+        let bestAnswer = confidenceArray.sort(function(a, b) { return b - a })
+        return bestAnswer[0];
+    }
 }
 
-function highestConfidence(answerDict)
-{
-    var confidenceArray = [];
-    for (let key of answerDict.keys())
-    {
-        confidenceArray.push(key);
-    }
-    bestAnswer = confidenceArray.sort(function(a, b){return b - a})
-    return bestAnswer[0];
-}
+let modelClass = new modelStatus();
+
 
 //test for Jasmine
 module.exports = {
-   nonEmptyArray: nonEmptyArray,
-   highestConfidence: highestConfidence
+    nonEmptyArray: nonEmptyArray,
+    highestConfidence: highestConfidence
 };
