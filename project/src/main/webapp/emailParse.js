@@ -19,13 +19,13 @@ class MLModelEmailParse {
     }
 
     loadModel() {
-        //let modelLoadReady = document.getElementById("modelLoad");
-        //modelLoadReady.innerHTML = 'Loading Model...';
+        let modelLoadReady = document.getElementById("modelLoad");
+        modelLoadReady.innerHTML = 'Loading Model...';
         console.time("Model Load");
         qna.load().then(loadedModel => {
             this.model = loadedModel;
             console.timeEnd("Model Load");
-            //modelLoadReady.innerHTML = 'Model Ready';
+            modelLoadReady.innerHTML = 'Model Ready';
         });
     }
 
@@ -88,7 +88,11 @@ class MLModelEmailParse {
     }
 }
 
-let mlClass = new MLModelEmailParse();
+/** Initialize mlClass outside to have access to class outside of function */
+let mlClass;
+window.onload = function() {
+    mlClass = new MLModelEmailParse();
+}
 
 
 //test for Jasmine
