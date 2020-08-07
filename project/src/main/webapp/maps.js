@@ -3,7 +3,7 @@ let service;
 let infowindow;
 
 function initMap() {
-    if (editedKeywordExtraction(document.getElementById('query').value) == 'Place'){
+    if (editedKeywordExtraction(document.getElementById('query').value) === 'Place'){
         document.getElementById('type').value = "Question Type: Place";
         infowindow = new google.maps.InfoWindow();
         map = new google.maps.Map(document.getElementById("map"), {
@@ -28,7 +28,7 @@ function initMap() {
             map.setCenter(results[0].geometry.location);
             }
         });
-    } else if (editedKeywordExtraction(document.getElementById('query').value) == 'Time'){
+    } else if (editedKeywordExtraction(document.getElementById('query').value) === 'Time'){
         document.getElementById('type').value = "Question Type: Time";
     }
 }
