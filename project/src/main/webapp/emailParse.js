@@ -22,29 +22,29 @@ class MLModelEmailParse {
     parseEmailsWithModel() {
         // class from Gmail API js file
         const gmail = new gmailAPI();
-        const {question, totalObjects} = gmail;
+        const { question, totalObjects } = gmail;
         const allPass = this.extractEmailBodiesToArray(totalObjects);
         console.time("Using Promises Test");
         this.model.then(model => {
             const promises = allPass.map(
                 passage => model.findAnswers(question, passage),
             );
-        Promise.all(promises).then(values => {
-            const nonEmpty = this.getScoreToEmail(values, allPass);
-            const answer = document.getElementById("answer");
-            if (nonEmpty.size == 0) {
-                answer.innerHTML = "No Answer Available";
-            }
-            else {
-                const orderedConfidence = this.highestConfidence(nonEmpty);
-                const mlDictAnswer = nonEmpty.get(orderedConfidence);
-                console.log("original", values);
-                console.log("nonEmpty", nonEmpty);
-                console.log("highest confidence", orderedConfidence);
-                answer.innerHTML = mlDictAnswer["answer"];
-                console.timeEnd("Using Promises Test");
-            }
-        });
+            Promise.all(promises).then(values => {
+                const nonEmpty = this.getScoreToEmail(values, allPass);
+                const answer = document.getElementById("answer");
+                if (nonEmpty.size == 0) {
+                    answer.innerHTML = "No Answer Available";
+                }
+                else {
+                    const orderedConfidence = this.highestConfidence(nonEmpty);
+                    const mlDictAnswer = nonEmpty.get(orderedConfidence);
+                    console.log("original", values);
+                    console.log("nonEmpty", nonEmpty);
+                    console.log("highest confidence", orderedConfidence);
+                    answer.innerHTML = mlDictAnswer["answer"];
+                    console.timeEnd("Using Promises Test");
+                }
+            });
         });
     }
 
