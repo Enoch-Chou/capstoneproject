@@ -11,22 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 /** Class to load ML Model and find the best answer using email bodies. */
 class MLModelEmailParse {
     constructor() {
-        this.model;
-        this.loadModel();
-    }
-
-    loadModel() {
-        let modelLoadReady = document.getElementById("modelLoad");
-        modelLoadReady.innerHTML = 'Loading Model...';
-        console.time("Model Load");
-        qna.load().then(loadedModel => {
-            this.model = loadedModel;
-            console.timeEnd("Model Load");
-            modelLoadReady.innerHTML = 'Model Ready';
-        });
+        this.model = qna.load();
     }
 
     /** Parse Email Bodies to apply ML Model using Promises */
@@ -36,9 +25,10 @@ class MLModelEmailParse {
         const {question, totalObjects} = gmail;
         const allPass = this.extractEmailBodiesToArray(totalObjects);
         console.time("Using Promises Test");
-        const promises = allPass.map(
-            passage => this.model.findAnswers(question, passage),
-        );
+        this.model.then(model => {
+            const promises = allPass.map(
+                passage => model.findAnswers(question, passage),
+            );
         Promise.all(promises).then(values => {
             const nonEmpty = this.getScoreToEmail(values, allPass);
             const answer = document.getElementById("answer");
@@ -55,6 +45,7 @@ class MLModelEmailParse {
                 console.timeEnd("Using Promises Test");
             }
         });
+        });
     }
 
     extractEmailBodiesToArray(exampleDict) {
@@ -66,7 +57,7 @@ class MLModelEmailParse {
         return allPass;
     }
 
-    /** Create map of scores with values as ML answer and email body */
+    /** Create map of scores with values as ML answer and email body. */
     getScoreToEmail(mlValues, allPass) {
         const confidenceWithEmailBody = new Map();
         for (let i = 0; i < mlValues.length; i++) {
@@ -88,7 +79,7 @@ class MLModelEmailParse {
     }
 }
 
-//test for Jasmine
+// test for Jasmine
 module.exports = {
     nonEmptyArray: nonEmptyArray,
     highestConfidence: highestConfidence
