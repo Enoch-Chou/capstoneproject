@@ -15,27 +15,29 @@
     <button id="authorize_button" style="display: none;">Authorize</button>
     <button id="signout_button" style="display: none;">Sign Out</button>
 
-    <form action="/data" method="POST">
-        <p>Please add a question to search for information inside your inbox</p>
-        <textarea name="text-input"></textarea>
-        <br/><br/>
-
-        <input type="submit" value="Search" />
-    </form>
-
+    <!-- <p>Please add a question to search for information inside your inbox</p>
+    <textarea id="text-input"></textarea>
+    <br/><br/>
+    <button onclick="listMessages()">search!</button> -->
     <pre id="content" style="white-space: pre-wrap;"></pre>
     
     <script type="text/javascript" src="api_key.js"></script>
     <script type="text/javascript" src="client_id.js"></script>
     <script type="text/javascript" src="gmail.js"> 
+    
     </script>
+    <p>Please add a question to search for information inside your inbox</p>
+    <textarea id="text-input"></textarea>
+    <br/><br/>
+    <button onclick="listMessages()">search!</button>
+    <br/><br/>
     <button onclick="parseEmailsWithModel()">Parse Emails</button>
 
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
-    <div id="modelLoad"></div>
-    <div id="answer"></div>
+    <!--div id="modelLoad"--></div>
+    <!--div id="answer"--></div>
   </body>
 </html>

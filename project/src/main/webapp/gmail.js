@@ -23,18 +23,6 @@ var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
 
-class GmailObject {
-    #emailObject;
-    #question
-    constructor(question) {
-        this.#emailObject = {};
-        this.#question = question;
-    }
-    get getEmailObject() {
-        return this.emailObject;
-    }
-}
-
 /**
   *  On load, called to load the auth2 library and API client library.
   */
@@ -153,7 +141,7 @@ function getMessage(messageId) {
     });
 }
 
-
+const emailObject = {};
 //Retrieve messages using hardcoded queries and the signed-in email.
 function listMessages() {
     var getPageOfMessages = function(request, result) {
@@ -164,7 +152,7 @@ function listMessages() {
                 request = gapi.client.gmail.users.messages.list({
                     'userId': 'me',
                     'pageToken': nextPageToken,
-                    'q': "When is the Technical Interview Prep Workshop?"
+                    'q': getQuery()
                 });
                 getPageOfMessages(request, result);
             } else {
@@ -176,7 +164,7 @@ function listMessages() {
     };
     var initialRequest = gapi.client.gmail.users.messages.list({
         'userId': 'me',
-        'q': "When is the Technical Interview Prep Workshop?"
+        'q': getQuery()
     });
     getPageOfMessages(initialRequest, []);
 }
@@ -184,3 +172,4 @@ function listMessages() {
 function getEmailObject() {
     console.log(emailObject);
 }
+
