@@ -12,20 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-    const greetings =
-        ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-    // Pick a random greeting.
-    const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-    // Add it to the page.
-    const greetingContainer = document.getElementById('greeting-container');
-    greetingContainer.innerText = greeting;
-}
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
@@ -36,6 +22,18 @@ var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
+
+class GmailObject {
+    #emailObject;
+    #question
+    constructor(question) {
+        this.#emailObject = {};
+        this.#question = question;
+    }
+    get getEmailObject() {
+        return this.emailObject;
+    }
+}
 
 /**
   *  On load, called to load the auth2 library and API client library.
@@ -75,9 +73,6 @@ function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
-        // getMessage();
-        listMessages();
-        getList();
     } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
@@ -110,14 +105,57 @@ function appendPre(message) {
     pre.appendChild(textContent);
 }
 
-var question = "What day is the livestream?";
-var arrayList = [];
-var totalObjects = {};
+function getQuery() {
+    const query = document.getElementById("text-input").value;
+    console.log("This is the textarea: " + query);
+    return query;
+}
+
+
+/**
+ * Get Message with given ID.
+ *
+ * @param  {String} messageId ID of Message to get.
+ */
+function getMessage(messageId) {
+    const messageRequest = gapi.client.gmail.users.messages.get({
+        'userId': 'me',
+        'id': messageId,
+        'format': "raw"
+    });
+    messageRequest.execute(response => {
+        //Convert from base64 encoding to text.
+        const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/'));
+        var hasFormatFlowed = false;
+        const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
+        const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
+        var emailBodyValue = decodedEmail.substring(emailBodyStartIndex, emailBodyStartIndex + emailBodyEndIndex);
+        if (emailBodyValue.indexOf("format=flowed") != -1) {
+            hasFormatFlowed = true;
+        }
+        emailBodyValue = emailBodyValue.substring(200);
+        const emailDateStartIndex = decodedEmail.indexOf("Date:");
+        const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
+        var emailDateValue = decodedEmail.substring(emailDateStartIndex, emailDateStartIndex + emailDateEndIndex);
+        const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
+        const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
+        var messageID = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
+
+        //Grabs the date of the email.
+        if (emailDateValue.indexOf("X-Notifications") != -1) {
+            emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
+        }
+
+        //A condition to check if it's an actual email.
+        if (!hasFormatFlowed && emailDateValue.length > 1 && emailBodyValue.indexOf("Daily Insider") == -1 /*(!(messageID in emailObject))*/) {
+            emailObject[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
+        }
+    });
+}
+
+
 //Retrieve messages using hardcoded queries and the signed-in email.
-async function listMessages() {
-    var list = [];
-    var emailObject = {};
-    const t0 = performance.now();
+function listMessages() {
     var getPageOfMessages = function(request, result) {
         request.execute(function(resp) {
             result = result.concat(resp.messages);
@@ -131,171 +169,18 @@ async function listMessages() {
                 getPageOfMessages(request, result);
             } else {
                 for (i = 0; i < result.length; i++) {
-                    const messageRequest = gapi.client.gmail.users.messages.get({
-                        'userId': 'me',
-                        'id': result[i].id,
-                        'format': "raw"
-                    });
-                    // var messageID = result[i].id;
-                    // console.log(messageID);
-                    messageRequest.execute(response => {
-                        //convert to from base64 encoding to text
-                        const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/'));
-                        var hasFormatFlowed = false;
-                        const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
-                        const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
-                        var emailBodyValue = decodedEmail.substring(emailBodyStartIndex, emailBodyStartIndex + emailBodyEndIndex);
-                        if (emailBodyValue.indexOf("format=flowed") != -1) {
-                            hasFormatFlowed = true;
-                        }
-                        emailBodyValue = emailBodyValue.substring(200);
-                        const emailDateStartIndex = decodedEmail.indexOf("Date:");
-                        const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
-                        var emailDateValue = decodedEmail.substring(emailDateStartIndex, emailDateStartIndex + emailDateEndIndex);
-                        const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
-                        const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
-                        var messageID = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
-                        //console.log(decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex));
-                        if (emailDateValue.indexOf("X-Notifications") != -1) {
-                            emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
-                        }
-                        //var emailObject = {};
-                        // emailObject[messageID] = {emailDate: emailDateValue, emailBody: emailBodyValue}; 
-                        if (!hasFormatFlowed && emailDateValue.length > 1 && emailBodyValue.indexOf("Daily Insider") == -1 /*(!(messageID in emailObject))*/) {
-                            emailObject[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
-                            list[list.length] = emailObject;
-                        }
-                        //console.log(decodedEmail);
-                        //arrayList = list;
-                        totalObjects = emailObject;
-                        //console.log(decodedEmail);
-                        console.log(totalObjects);
-                        //console.log(list);
-                        const t1 = performance.now();
-                        console.log(t1 - t0);
-                    });
+                    getMessage(result[i].id);
                 }
             }
         });
     };
-    //console.log(list);
-    //const t1 = performance.now();
-    //console.log(t1-t0);
     var initialRequest = gapi.client.gmail.users.messages.list({
         'userId': 'me',
         'q': "When is the Technical Interview Prep Workshop?"
     });
     getPageOfMessages(initialRequest, []);
-    //console.log(list);
-    //const t1 = performance.now();
-    //console.log(t1-t0);
 }
 
-function getList() {
-    console.log(arrayList);
+function getEmailObject() {
+    console.log(emailObject);
 }
-
-
-
-/**
- * Get Message with given ID.
- *
- * @param  {String} userId User's email address. The special value 'me'
- * can be used to indicate the authenticated user.
- * @param  {String} messageId ID of Message to get.
- * @param  {Function} callback Function to call when the request is complete.
- */
-function getMessage(userId, messageId, callback) {
-    var request = gapi.client.gmail.users.messages.get({
-        'userId': userId,
-        'id': messageId
-    });
-    request.execute(callback);
-}
-
-/*************************************************************************************************************************** Brandon Vu Section*/
-
-
-
-
-
-
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-var model;
-function getModel() {
-    console.time("Model Load");
-    qna.load().then(loadedModel => {
-        model = loadedModel;
-        console.timeEnd("Model Load");
-    });
-}
-
-function parseEmailsWithModel() {
-    //var question = "When is my Microsoft Interview?"
-    var exampleDict = {
-        "12345": { "date": "Some string", "body": "Your Microsoft interview will be held on October 2, 2019 at 01:45 PM Pacific Time (US & Canada)" },
-        "23456": { "date": "Some string", "body": "Arely Miranda González, a Product Manager at YouTube, started Karma Action, a new non-profit organization and webapp" },
-        "34567": { "date": "Some string", "body": "Your microsoft workshop is on Monday 4, 2019." },
-    };
-    var allPass = listOfPassages(totalObjects);
-    console.time("Using Promises Test");
-    const promises = allPass.map(
-        passage => model.findAnswers(question, passage),
-    );
-    Promise.all(promises).then((values) => {
-        var nonEmpty = ridOfEmptyArrays(values, allPass);
-        var orderedConfidence = highestConfidence(nonEmpty);
-        var MLDictAnswer = nonEmpty.get(orderedConfidence);
-        console.log("original", values);
-        console.log("nonEmpty", nonEmpty);
-        console.log("highest confidence", orderedConfidence);
-        console.log("final answer: ", MLDictAnswer["answer"]);
-        console.timeEnd("Using Promises Test");
-    });
-}
-
-function listOfPassages(exampleDict) {
-    var allPass = [];
-    for (var key in exampleDict) {
-        allPass.push(exampleDict[key]["emailBody"]);
-    }
-    return allPass;
-}
-
-function ridOfEmptyArrays(MLvalues, allPass) {
-    let confidenceWithEmailBody = new Map();
-    for (let i = 0; i < MLvalues.length; i++) {
-        if (MLvalues[i].length != 0) {
-            MLAnswer = MLvalues[i][0]["text"];
-            confidenceWithEmailBody.set(MLvalues[i][0]["score"], { "answer": MLAnswer, "emailBody": allPass[i] })
-        }
-    }
-    return confidenceWithEmailBody;
-}
-
-function highestConfidence(answerDict) {
-    var confidenceArray = [];
-    for (let key of answerDict.keys()) {
-        confidenceArray.push(key);
-    }
-    bestAnswer = confidenceArray.sort(function(a, b) { return b - a })
-    return bestAnswer[0];
-}
-
-//test for Jasmine
-module.exports = {
-    nonEmptyArray: nonEmptyArray,
-    highestConfidence: highestConfidence
-};
