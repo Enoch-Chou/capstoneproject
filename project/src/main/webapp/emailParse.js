@@ -52,7 +52,7 @@ class MLModelEmailParse {
         const allPass = [];
         for (let key in exampleDict) {
             let body = exampleDict[key]["emailBody"];
-            allPass.push(body.slice(300));
+            allPass.push(body);
         }
         return allPass;
     }
