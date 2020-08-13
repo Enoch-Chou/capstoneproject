@@ -1,0 +1,29 @@
+{
+  "name": "capstoneproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "istanbul": "^0.4.5",
+    "jasmine": "^3.6.1",
+    "jasmine-node": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "istanbul cover node_modules/jasmine/bin/jasmine.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Enoch-Chou/capstoneproject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Enoch-Chou/capstoneproject/issues"
+  },
+  "homepage": "https://github.com/Enoch-Chou/capstoneproject#readme"
+}
