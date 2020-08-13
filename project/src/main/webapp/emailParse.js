@@ -81,6 +81,8 @@ class MLModelEmailParse {
 
 // test for Jasmine
 module.exports = {
-    nonEmptyArray: nonEmptyArray,
-    highestConfidence: highestConfidence
+    getScoreToEmail: MLModelEmailParse.getScoreToEmail,
+    extractEmailBodiesToArray: MLModelEmailParse.extractEmailBodiesToArray,
+    highestConfidence: MLModelEmailParse.highestConfidence,
+    MLModelEmailParse: MLModelEmailParse
 };
