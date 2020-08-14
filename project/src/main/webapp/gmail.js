@@ -164,7 +164,6 @@ function getMessage(messageId) {
     });
 }
 
-
 //Retrieve messages using hardcoded queries and the signed-in email.
 function listMessages() {
     emailObjects = {};
