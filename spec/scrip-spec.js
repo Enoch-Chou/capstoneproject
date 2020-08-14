@@ -1,4 +1,4 @@
-/** Testing file using Jasmine on  */
+/** Testing file using Jasmine on emailParse.js. */
 let app= require("../project/src/main/webapp/emailParse.js");
 let MLClass = app.MLModelEmailParse;
 
