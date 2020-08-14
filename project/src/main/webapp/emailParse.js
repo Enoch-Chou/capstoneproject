@@ -18,7 +18,7 @@ class MLModelEmailParse {
         this.model = qna.load();
     }
 
-    /** Parse Email Bodies to apply ML Model using Promises */
+    /** Parse Email Bodies to apply ML Model using Promises. */
     parseEmailsWithModel() {
         // class from Gmail API js file
         const gmail = new gmailAPI();
@@ -79,7 +79,7 @@ class MLModelEmailParse {
     }
 }
 
-// test for Jasmine
+/** Test for Jasmine. */
 module.exports = {
     getScoreToEmail: MLModelEmailParse.getScoreToEmail,
     extractEmailBodiesToArray: MLModelEmailParse.extractEmailBodiesToArray,
