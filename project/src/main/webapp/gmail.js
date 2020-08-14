@@ -22,9 +22,10 @@ var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
+let emailObjects = {};
 
 /**
-  *  On load, called to load the auth2 library and API client library.
+  * On load, called to load the auth2 library and API client library.
   */
 function handleClientLoad() {
     gapi.load('client:auth2', initClient);
@@ -93,12 +94,51 @@ function appendPre(message) {
     pre.appendChild(textContent);
 }
 
+//Get the gmail search query from the front end
 function getQuery() {
     const query = document.getElementById("text-input").value;
     console.log("This is the textarea: " + query);
     return query;
 }
 
+function getEmailBody(decodedEmail) {
+    const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
+    const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
+    let emailBodyValue = decodedEmail.substring(emailBodyStartIndex, emailBodyStartIndex + emailBodyEndIndex);
+    if (emailBodyValue.indexOf("Forwarded message") != -1) {
+        emailBodyValue = emailBodyValue.substring(0, emailBodyValue.indexOf("Forwarded message"));
+    }
+    return emailBodyValue;
+}
+
+function getEmailDate(decodedEmail) {
+    const emailDateStartIndex = decodedEmail.indexOf("Date:");
+    const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
+    return decodedEmail.substring(emailDateStartIndex, emailDateStartIndex + emailDateEndIndex);
+}
+
+function getMessageID(decodedEmail) {
+    const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
+    const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
+    let emailDateValue = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
+    if (emailDateValue.indexOf("X-Notifications") != -1) {
+        emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
+    }
+    return emailDateValue;
+}
+
+function isActualEmail(emailBodyValue, emailDateValue) {
+    if (emailBodyValue.indexOf("Daily Insider") != -1) {
+        return false;
+    }
+    if (emailDateValue.length <= 1) {
+        return false;
+    }
+    if (emailBodyValue.indexOf("format=flowed") != -1) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * Get Message with given ID.
@@ -114,36 +154,20 @@ function getMessage(messageId) {
     messageRequest.execute(response => {
         //Convert from base64 encoding to text.
         const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/'));
-        var hasFormatFlowed = false;
-        const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
-        const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
-        var emailBodyValue = decodedEmail.substring(emailBodyStartIndex, emailBodyStartIndex + emailBodyEndIndex);
-        if (emailBodyValue.indexOf("format=flowed") != -1) {
-            hasFormatFlowed = true;
+        const emailBodyValue = getEmailBody(decodedEmail);
+        const emailDateValue = getEmailDate(decodedEmail);
+        const messageID = getMessageID(decodedEmail);
+        if (isActualEmail(emailBodyValue, emailDateValue)) {
+            emailObjects[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
         }
-        emailBodyValue = emailBodyValue.substring(200);
-        const emailDateStartIndex = decodedEmail.indexOf("Date:");
-        const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
-        var emailDateValue = decodedEmail.substring(emailDateStartIndex, emailDateStartIndex + emailDateEndIndex);
-        const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
-        const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
-        var messageID = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
-
-        //Grabs the date of the email.
-        if (emailDateValue.indexOf("X-Notifications") != -1) {
-            emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
-        }
-
-        //A condition to check if it's an actual email.
-        if (!hasFormatFlowed && emailDateValue.length > 1 && emailBodyValue.indexOf("Daily Insider") == -1 /*(!(messageID in emailObject))*/) {
-            emailObject[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
-        }
+        getEmailObject();
     });
 }
 
-const emailObject = {};
+
 //Retrieve messages using hardcoded queries and the signed-in email.
 function listMessages() {
+    emailObjects = {};
     var getPageOfMessages = function(request, result) {
         request.execute(function(resp) {
             result = result.concat(resp.messages);
@@ -156,8 +180,8 @@ function listMessages() {
                 });
                 getPageOfMessages(request, result);
             } else {
-                for (i = 0; i < result.length; i++) {
-                    getMessage(result[i].id);
+                for (var i = 0; i < result.length; i++) {
+                    this.getMessage(result[i].id);
                 }
             }
         });
@@ -169,7 +193,14 @@ function listMessages() {
     getPageOfMessages(initialRequest, []);
 }
 
-function getEmailObject() {
-    console.log(emailObject);
-}
+class gmailAPI {
+    question = getQuery();
+    totalObjects = emailObjects;
 
+    get question() {
+        return question;
+    }
+    get totalObjects() {
+        return totalObjects;
+    }
+};
