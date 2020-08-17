@@ -108,6 +108,10 @@ function getEmailBody(decodedEmail) {
     if (emailBodyValue.indexOf("Forwarded message") != -1) {
         emailBodyValue = emailBodyValue.substring(0, emailBodyValue.indexOf("Forwarded message"));
     }
+    const quotedPrintableIndex = emailBodyValue.indexOf("quoted-printable");
+    if (quotedPrintableIndex != -1) {
+        emailBodyValue = emailBodyValue.substring(quotedPrintableIndex + 16);
+    }
     return emailBodyValue;
 }
 
@@ -127,6 +131,13 @@ function getMessageID(decodedEmail) {
     return emailDateValue;
 }
 
+/**
+  * Checks if the email is a valid email
+  * 
+  * Criteria 1: Isn't a Daily Insider message - breaks ML model
+  * Criteria 2: Isn't an empty email
+  * Criteria 3: Isn't a google chat message
+  */
 function isActualEmail(emailBodyValue, emailDateValue) {
     if (emailBodyValue.indexOf("Daily Insider") != -1) {
         return false;
@@ -138,6 +149,10 @@ function isActualEmail(emailBodyValue, emailDateValue) {
         return false;
     }
     return true;
+}
+
+function getEmailObjects() {
+    console.log(emailObjects);
 }
 
 /**
@@ -160,7 +175,7 @@ function getMessage(messageId) {
         if (isActualEmail(emailBodyValue, emailDateValue)) {
             emailObjects[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
         }
-        getEmailObject();
+        getEmailObjects();
     });
 }
 
