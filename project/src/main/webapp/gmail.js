@@ -195,7 +195,14 @@ function listMessages() {
                 getPageOfMessages(request, result);
             } else {
                 for (var i = 0; i < result.length; i++) {
-                    this.getMessage(result[i].id);
+                    if (result[i] === undefined) {
+                        console.log("There are no messages from the query");    
+                    } 
+                    else {
+                        console.log(result.length);
+                        console.log(result);
+                        this.getMessage(result[i].id);
+                    }
                 }
             }
         });
