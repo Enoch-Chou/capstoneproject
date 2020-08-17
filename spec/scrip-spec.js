@@ -33,12 +33,13 @@ describe("extractEmailBodiesToArray",function(){
     it("The function only returns an array of email bodies from the Gmail dictionary of email properties",function() {
         
         let emailDict = {};
-        let emailString1 = "x".repeat(5);
-        let emailString2 = "p".repeat(5);
+        let emailString1 = "This is body 1";
+        let emailString2 = "This is body 2";
+        let answerArray = [emailString1, emailString2];
         emailDict[12354876433322] = { "emailDate": 'October 2, 2019', "emailBody": emailString1 };
         emailDict[97654356423142] = { "emailDate": 'October 2, 2019', "emailBody": emailString2 };
         var value=modelClass.extractEmailBodiesToArray(emailDict);
-        expect(value).toEqual(["xxxxx","ppppp"]);
+        expect(value).toEqual(answerArray);
     });
 });
 
