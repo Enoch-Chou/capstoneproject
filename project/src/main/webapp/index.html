@@ -12,13 +12,13 @@
     <script type="text/javascript" src="client-id.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=API-KEY&libraries=places"></script>
     <script src = "script.js"></script>
+    <script src="classemailparse.js"></script>
+    <script src="search.js"></script>
     <script src="maps.js"></script>
-    <script src="emailParse.js"></script>
   </head>
-  <body onload = "getModel()">
+  <body onload="obj = new MLModelEmailParse();">
     <input id = 'query' type = "text" name = "query" />
-    <button onclick="parseEmailsWithModel()">Search</button>
-    <button onclick="initMap()">Display</button>
+    <button onclick="obj.parseEmailsWithModel();">Display</button>
     <div id = "displayAnswer"></div>
     <div id = "type"></div>
     <div id = "map" style="width: 400px; height: 400px"></div>
