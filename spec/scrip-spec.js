@@ -4,7 +4,7 @@ let MLClass = app.MLModelEmailParse;
 
 const modelClass = new MLClass();
 describe("getScoreToEmail",function(){
-    it("The function only returns map with ML answer and confidence score with email body for later reference",function() {
+    it("returns map with ML answer and confidence score with email body for later reference",function() {
         const currentArray = [
             [{text: "October 2, 2019", score: 6.968050003051758, startIndex: 85, endIndex: 100}],
             [],
@@ -19,7 +19,7 @@ describe("getScoreToEmail",function(){
 });
 
 describe("HighestConfidence",function(){
-    it("The function only returns the the highest confidence score",function() {
+    it("only returns the the highest confidence score",function() {
         let currentMap = new Map();
         currentMap.set(6.968050003051758, { answer: 'October 2, 2019', emailBody: 'some email' })
         currentMap.set(10.968050003051758, { answer: 'March 5, 2019', emailBody: 'another email' })
@@ -30,7 +30,7 @@ describe("HighestConfidence",function(){
 });
 
 describe("extractEmailBodiesToArray",function(){
-    it("The function only returns an array of email bodies from the Gmail dictionary of email properties",function() {
+    it("only returns an array of email bodies from the Gmail dictionary of email properties",function() {
         
         let emailDict = {};
         const emailString1 = "This is body 1";
