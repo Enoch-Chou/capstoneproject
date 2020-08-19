@@ -1,5 +1,6 @@
-/** Initialize mlClass outside to have access to class outside of function */
-let mlClass;
-window.onload = function() {
-    mlClass = new MLModelEmailParse();
+
+function main() {
+    const gmail = new gmailAPI(getQuery());
+    listMessages(gmail).then(() => mlClass.parseEmailsWithModel(gmail)
+    );
 }
