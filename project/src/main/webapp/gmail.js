@@ -97,126 +97,12 @@ function appendPre(message) {
 //Get the gmail search query from the front end
 function getQuery() {
     const query = document.getElementById("text-input").value;
-    console.log("This is the textarea: " + query);
     return query;
 }
 
-// function getEmailBody(decodedEmail) {
-//     const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
-//     const emailBodyEndIndex = (decodedEmail.substring(emailBodyStartIndex)).indexOf("Content-Type: text/html; charset=\"UTF-8\"")
-//     let emailBodyValue = decodedEmail.substring(emailBodyStartIndex, emailBodyStartIndex + emailBodyEndIndex);
-//     if (emailBodyValue.indexOf("Forwarded message") != -1) {
-//         emailBodyValue = emailBodyValue.substring(0, emailBodyValue.indexOf("Forwarded message"));
-//     }
-//     const quotedPrintableIndex = emailBodyValue.indexOf("quoted-printable");
-//     if (quotedPrintableIndex != -1) {
-//         emailBodyValue = emailBodyValue.substring(quotedPrintableIndex + 16);
-//     }
-//     return emailBodyValue;
-// }
-
-// function getEmailDate(decodedEmail) {
-//     const emailDateStartIndex = decodedEmail.indexOf("Date:");
-//     const emailDateEndIndex = decodedEmail.substring(emailDateStartIndex).indexOf("Message-ID");
-//     return decodedEmail.substring(emailDateStartIndex, emailDateStartIndex + emailDateEndIndex);
-// }
-
-// function getMessageID(decodedEmail) {
-//     const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
-//     const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
-//     let emailDateValue = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
-//     if (emailDateValue.indexOf("X-Notifications") != -1) {
-//         emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
-//     }
-//     return emailDateValue;
-// }
-
-// /**
-//   * Checks if the email is a valid email
-//   * 
-//   * Criteria 1: Isn't a Daily Insider message - breaks ML model
-//   * Criteria 2: Isn't an empty email
-//   * Criteria 3: Isn't a google chat message
-//   */
-// function isActualEmail(emailBodyValue, emailDateValue) {
-//     if (emailBodyValue.indexOf("Daily Insider") != -1) {
-//         return false;
-//     }
-//     if (emailDateValue.length <= 1) {
-//         return false;
-//     }
-//     if (emailBodyValue.indexOf("format=flowed") != -1) {
-//         return false;
-//     }
-//     return true;
-// }
-
-// function getEmailObjects() {
-//     console.log(emailObjects);
-// }
-
-// /**
-//  * Get Message with given ID.
-//  *
-//  * @param  {String} messageId ID of Message to get.
-//  */
-// function getMessage(messageId) {
-//     const messageRequest = gapi.client.gmail.users.messages.get({
-//         'userId': 'me',
-//         'id': messageId,
-//         'format': "raw"
-//     });
-//     messageRequest.execute(response => {
-//         //Convert from base64 encoding to text.
-//         const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/'));
-//         const emailBodyValue = getEmailBody(decodedEmail);
-//         const emailDateValue = getEmailDate(decodedEmail);
-//         const messageID = getMessageID(decodedEmail);
-//         if (isActualEmail(emailBodyValue, emailDateValue)) {
-//             emailObjects[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
-//         }
-//         getEmailObjects();
-//     });
-// }
-
-// //Retrieve messages using hardcoded queries and the signed-in email.
-// function listMessages() {
-//     emailObjects = {};
-//     var getPageOfMessages = function(request, result) {
-//         request.execute(function(resp) {
-//             result = result.concat(resp.messages);
-//             var nextPageToken = resp.nextPageToken;
-//             if (nextPageToken) {
-//                 request = gapi.client.gmail.users.messages.list({
-//                     'userId': 'me',
-//                     'pageToken': nextPageToken,
-//                     'q': getQuery()
-//                 });
-//                 getPageOfMessages(request, result);
-//             } else {
-//                 for (var i = 0; i < result.length; i++) {
-//                     if (result[i] === undefined) {
-//                         console.log("There are no messages from the query");
-//                     }
-//                     else {
-//                         console.log(result.length);
-//                         console.log(result);
-//                         this.getMessage(result[i].id);
-//                     }
-//                 }
-//             }
-//         });
-//     };
-//     var initialRequest = gapi.client.gmail.users.messages.list({
-//         'userId': 'me',
-//         'q': getQuery()
-//     });
-//     getPageOfMessages(initialRequest, []);
-// }
-
 class gmailAPI {
     question;
-    emailObjects = {};
+    emailObject
 
     constructor(question) {
         this.question = question;
@@ -328,12 +214,6 @@ class gmailAPI {
                                 console.log("There are no messages from the query");
                             }
                             else {
-                                console.log(result.length);
-                                console.log(result);
-                                console.log(result[i].id);
-                                // if (result[i].id === undefined) {
-                                //   this.getMessage(result[i].id);  
-                                // }
                                 promiseArray.push(this.getMessage(result[i].id));
                             }
                         }
