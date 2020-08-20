@@ -21,8 +21,8 @@ class MLModelEmailParse {
     /** Parse Email Bodies to apply ML Model using Promises */
     parseEmailsWithModel(gmail) {
         // class from Gmail API js file
-        const { question, totalObjects } = gmail;
-        const allPass = this.extractEmailBodiesToArray(totalObjects);
+        const { question, emailObjects } = gmail;
+        const allPass = this.extractEmailBodiesToArray(emailobjects);
         console.time("Using Promises Test");
         this.model.then(model => {
             const promises = allPass.map(
