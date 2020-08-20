@@ -18,12 +18,11 @@ class MLModelEmailParse {
         this.model = qna.load();
     }
 
-    /** Parse Email Bodies to apply ML Model using Promises. */
-    parseEmailsWithModel() {
-        // class from Gmail API js file.
-        const gmail = new gmailAPI();
-        const { question, emailObjects } = gmail;
-        const allPass = this.extractEmailBodiesToArray(emailObjects);
+    /** Parse Email Bodies to apply ML Model using Promises */
+    parseEmailsWithModel(gmail) {
+        // class from Gmail API js file
+        const { question, totalObjects } = gmail;
+        const allPass = this.extractEmailBodiesToArray(totalObjects);
         console.time("Using Promises Test");
         this.model.then(model => {
             const promises = allPass.map(
@@ -32,26 +31,34 @@ class MLModelEmailParse {
             Promise.all(promises).then(values => {
                 const nonEmpty = this.getScoreToEmail(values, allPass);
                 const answer = document.getElementById("answer");
+                const displayEmail = document.getElementById("display_emails");
+                displayEmail.innerHTML = '';
+                answer.innerHTML = '';
                 if (nonEmpty.size == 0) {
                     answer.innerHTML = "No Answer Available";
                 }
                 else {
-                    const orderedConfidence = this.highestConfidence(nonEmpty);
-                    const mlDictAnswer = nonEmpty.get(orderedConfidence);
-                    console.log("original", values);
-                    console.log("nonEmpty", nonEmpty);
-                    console.log("highest confidence", orderedConfidence);
-                    answer.innerHTML = mlDictAnswer["answer"];
+                    this.displayEmailBodies(nonEmpty, answer, displayEmail);
                     console.timeEnd("Using Promises Test");
                 }
             });
         });
     }
 
-    extractEmailBodiesToArray(exampleDict) {
+    displayEmailBodies(nonEmpty, answer, displayEmail) {
+        const arrayConfidence = this.arrayOfConfidence(nonEmpty);
+        for (let i = 0; i < 3; i++) {
+            const mlDictAnswer = nonEmpty.get(arrayConfidence[i]);
+            displayEmail.appendChild(this.createListElement("", mlDictAnswer["answer"]));
+            displayEmail.appendChild(this.createListElement(mlDictAnswer["emailBody"], mlDictAnswer["answer"]));
+        }
+
+    }
+
+    extractEmailBodiesToArray(emailDict) {
         const allPass = [];
-        for (let key in exampleDict) {
-            let body = exampleDict[key]["emailBody"];
+        for (let key in emailDict) {
+            let body = emailDict[key]["emailBody"];
             allPass.push(body);
         }
         return allPass;
@@ -69,17 +76,38 @@ class MLModelEmailParse {
         return confidenceWithEmailBody;
     }
 
-    highestConfidence(answerDict) {
+    arrayOfConfidence(answerDict) {
         let confidenceArray = [];
         for (let key of answerDict.keys()) {
             confidenceArray.push(key);
         }
-        let bestAnswer = confidenceArray.sort((a, b) => b - a);
-        return bestAnswer[0];
+        let orderedArray = confidenceArray.sort((a, b) => b - a);
+        return orderedArray;
+    }
+
+    highlight(emailBody, answer, bodyTag) {
+        bodyTag.innerHTML = emailBody;
+        var innerHTML = bodyTag.innerHTML;
+        var index = innerHTML.indexOf(answer);
+        if (index >= 0) {
+            innerHTML = innerHTML.substring(0, index) + "<span class='highlight'>" + innerHTML.substring(index, index + answer.length) + "</span>" + innerHTML.substring(index + answer.length);
+            bodyTag.innerHTML = innerHTML;
+        }
+    }
+
+    createListElement(emailBody, answer) {
+        const bodyTag = document.createElement('ul');
+        if (emailBody != "") {
+            this.highlight(emailBody, answer, bodyTag);
+        }
+        else {
+            bodyTag.innerHTML = answer;
+        }
+        return bodyTag;
     }
 }
 
-/** Test for Jasmine. */
+// test for Jasmine
 module.exports = {
     getScoreToEmail: MLModelEmailParse.getScoreToEmail,
     extractEmailBodiesToArray: MLModelEmailParse.extractEmailBodiesToArray,
