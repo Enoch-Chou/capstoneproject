@@ -30,18 +30,18 @@ class MLModelEmailParse {
     }
 
     /** Parse Email Bodies to apply ML Model using Promises */
-    parseEmailsWithModel() {
+    parseEmailsWithModel(gmail) {
         // class from Gmail API js file
-        const gmail = new gmailAPI();
-        const {question, totalObjects} = gmail;
-        const allPass = this.extractEmailBodiesToArray(totalObjects);
+        const {emailObjects, question} = gmail;
+        const allPass = this.extractEmailBodiesToArray(emailObjects);
+        console.log("emailObjects: ", emailObjects);
         console.time("Using Promises Test");
         const promises = allPass.map(
             passage => this.model.findAnswers(question, passage),
         );
         Promise.all(promises).then(values => {
             const nonEmpty = this.getScoreToEmail(values, allPass);
-            const answer = document.getElementById("answer");
+            const answer = document.getElementById("displayAnswer");
             if (nonEmpty.size == 0) {
                 answer.innerHTML = "No Answer Available";
             }
@@ -52,6 +52,8 @@ class MLModelEmailParse {
                 console.log("nonEmpty", nonEmpty);
                 console.log("highest confidence", orderedConfidence);
                 answer.innerHTML = mlDictAnswer["answer"];
+                answer.value = mlDictAnswer["answer"];
+                initMap();
                 console.timeEnd("Using Promises Test");
             }
         });
@@ -61,7 +63,7 @@ class MLModelEmailParse {
         const allPass = [];
         for (let key in exampleDict) {
             let body = exampleDict[key]["emailBody"];
-            allPass.push(body.slice(300));
+            allPass.push(body);
         }
         return allPass;
     }
