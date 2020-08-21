@@ -4,7 +4,7 @@ let infowindow;
 
 function initMap() {
     if (editedKeywordExtraction(document.getElementById('query').value) === 'Place'){
-        document.getElementById('type').value = "Question Type: Place";
+        document.getElementById("map").style.display = "block";
         infowindow = new google.maps.InfoWindow();
         map = new google.maps.Map(document.getElementById("map"), {
             center: google.maps.LatLng(-33.867, 151.195),
@@ -28,8 +28,8 @@ function initMap() {
             map.setCenter(results[0].geometry.location);
             }
         });
-    } else if (editedKeywordExtraction(document.getElementById('query').value) === 'Time'){
-        document.getElementById('type').value = "Question Type: Time";
+    } else {
+        document.getElementById("map").style.display = "none";
     }
 }
 
