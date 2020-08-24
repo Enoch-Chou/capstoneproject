@@ -11,15 +11,21 @@
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
 	<script type="text/javascript" src="api_key.js"></script>
 	<script type="text/javascript" src="client_id.js"></script>
-    <link rel="stylesheet" href="style.css">
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxHHs59d9_IxH3YGpyzwSkA54Uho0uneU&libraries=places">
 	</script>
+	<script src="search.js"></script>
+	<script src="keyword.js"></script>
+	<script src="maps.js"></script>
 </head>
 
-<body>
-	<h1>MVP Demo</h1>
-	<button id="authorize_button" style="display: none;">Authorize</button>
+<body><center>
+	<br/><br/>
+    <a href="feedback.html">Click this tab to give us feedback!</a>
+    <button id="authorize_button" style="display: none;">Authorize</button>
 	<button id="signout_button" style="display: none;">Sign Out</button>
+    <br/>
+	<h1>MVP Demo</h1>
+
 
 	<pre id="content" style="white-space: pre-wrap;"></pre>
 
@@ -35,15 +41,16 @@
 	<button onclick="main()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
 
     <div id="answer"></div>
-    <ul id="display_emails"></ul>
+
+	<div id="displayAnswer"></div>
 	<div id="type"></div>
 	<div id="map" style="width: 400px; height: 400px"></div>
 
 	<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
 		onreadystatechange="if (this.readyState === 'complete') this.onload()">
 	</script>
-	<div id="modelLoad"></div>
-    
+    <div id="emailAnswers"></div>
+    <br/><br/>
 </body>
 
 </html>
