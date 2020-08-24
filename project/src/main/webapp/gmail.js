@@ -60,6 +60,7 @@ function initClient() {
   */
 function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
+        console.log(gapi.auth2.getAuthInstance().currentUser.get().rt.$t);
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
     } else {
@@ -100,12 +101,11 @@ function getQuery() {
     return query;
 }
 
-class gmailAPI {
+class GmailAPI {
+    emailObject;
     question;
-    emailObject
 
-    constructor(question) {
-        this.question = question;
+    constructor() {
         this.emailObjects = {};
     }
 
@@ -120,6 +120,11 @@ class gmailAPI {
         const quotedPrintableIndex = emailBodyValue.indexOf("quoted-printable");
         if (quotedPrintableIndex != -1) {
             emailBodyValue = emailBodyValue.substring(quotedPrintableIndex + 16);
+        }
+        const contentTypeIndex = emailBodyValue.indexOf("Content-Type: text/plain; charset=\"UTF-8");
+        const contentTypeLength = "Content-Type: text/plain; charset=\"UTF-8".length;
+        if (contentTypeIndex != -1) {
+            emailBodyValue = emailBodyValue.substring(contentTypeIndex + contentTypeLength);
         }
         return emailBodyValue;
     }
@@ -138,6 +143,29 @@ class gmailAPI {
             emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
         }
         return emailDateValue;
+    }
+
+    getEmailSubject(decodedEmail) {
+        const subjectLength = "Subject: ".length;
+        const emailSubjectStartIndex = decodedEmail.indexOf("Subject: ") + subjectLength;
+        const emailSubjectEndIndex = decodedEmail.substring(emailSubjectStartIndex).indexOf("To: ") + emailSubjectStartIndex;
+        const emailSubjectValue = decodedEmail.substring(emailSubjectStartIndex, emailSubjectEndIndex);
+        return emailSubjectValue;
+    }
+
+    getEmailSender(decodedEmail) {
+        const fromLength = "From: ".length;
+        const emailSenderStartIndex = decodedEmail.indexOf("From: ") + fromLength;
+        const emailSenderEndIndex = decodedEmail.substring(emailSenderStartIndex).indexOf("Date:") + emailSenderStartIndex;
+        const emailSenderValue = decodedEmail.substring(emailSenderStartIndex, emailSenderEndIndex);
+        return emailSenderValue;
+    }
+
+    hasEmails(emailList) {
+        if (emailList[0] !== undefined) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -160,10 +188,6 @@ class gmailAPI {
         return true;
     }
 
-    getEmailObjects() {
-        console.log(this.emailObjects);
-    }
-
     /**
      * Get Message with given ID.
      *
@@ -182,10 +206,16 @@ class gmailAPI {
                 const emailBodyValue = this.getEmailBody(decodedEmail);
                 const emailDateValue = this.getEmailDate(decodedEmail);
                 const messageID = this.getMessageID(decodedEmail);
+                const emailSenderValue = this.getEmailSender(decodedEmail);
+                const emailSubjectValue = this.getEmailSubject(decodedEmail);
                 if (this.isActualEmail(emailBodyValue, emailDateValue)) {
-                    this.emailObjects[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
+                    this.emailObjects[messageID] = {
+                        emailDate: emailDateValue,
+                        emailBody: emailBodyValue,
+                        emailSender: emailSenderValue, 
+                        emailSubject: emailSubjectValue
+                    };
                 }
-                this.getEmailObjects();
                 resolve();
             });
         });
@@ -193,8 +223,12 @@ class gmailAPI {
     }
 
     //Retrieve messages using hardcoded queries and the signed-in email.
-    listMessages() {
+    listMessages(question) {
         this.emailObjects = {};
+        this.question = getQuery();
+        // if (this.question === "") {
+        //     console.log("Please enter something!");
+        // }
         const listMessagePromise = new Promise((resolve) => {
             const promiseArray = [];
             var getPageOfMessages = (request, result) => {
@@ -210,15 +244,12 @@ class gmailAPI {
                         getPageOfMessages(request, result);
                     } else {
                         for (var i = 0; i < result.length; i++) {
-                            if (result[i] === undefined) {
-                                console.log("There are no messages from the query");
-                            }
-                            else {
+                            if (this.hasEmails(result)) {
                                 promiseArray.push(this.getMessage(result[i].id));
                             }
                         }
                         Promise.all(promiseArray).then(() => resolve()
-                        ); //Promise.all and then this.resolve
+                        );
                     }
                 });
             };
@@ -228,7 +259,6 @@ class gmailAPI {
             });
             getPageOfMessages(initialRequest, []);
         });
-        console.log("The promise ended");
         return listMessagePromise;
     }
 
@@ -240,6 +270,6 @@ class gmailAPI {
     }
 };
 
-function listMessages(gmail) {
-    return gmail.listMessages();
-}
+// function listMessages(gmail) {
+//     return gmail.listMessages();
+// }
