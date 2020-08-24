@@ -1,3 +1,64 @@
+#content {
+  margin-left: auto;
+  margin-right: auto;
+  width: 650px;
+}
+
 .highlight {
   background-color: yellow;
+}
+
+.active, .collapsible:hover {
+  background-color: #fc5d94;
+} 
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  margin: auto;
+  width: 50%;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  text-align: left;
+
+}
+
+.collapsible {
+  position: relative;
+  background-color:#ff4081;
+  border: none;
+  font-size: 15px;
+  color: #FFFFFF;
+  padding: 18px;
+  width: 50%; 
+  text-align: left;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+
+}
+
+.collapsible:after {
+  content: "";
+  background:#fc5d94;
+  display: block;
+  position: absolute;
+  padding-top: 300%;
+  padding-left: 350%;
+  margin-left: -20px;
+  margin-top: -120%;
+  opacity: 0;
+  transition: all 0.8s
+}
+
+.collapsible:active:after {
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s
+}
+#emailAnswers {
+  text-align: center;
 }
