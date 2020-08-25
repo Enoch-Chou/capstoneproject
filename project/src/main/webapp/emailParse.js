@@ -170,7 +170,6 @@ class MLModelEmailParse {
     }
 }
 
-
 // test for Jasmine
 module.exports = {
     getScoreToEmail: MLModelEmailParse.getScoreToEmail,
