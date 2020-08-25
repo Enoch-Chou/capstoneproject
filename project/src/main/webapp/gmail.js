@@ -22,7 +22,7 @@ var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
-//let emailObjects = {};
+
 
 /**
   * On load, called to load the auth2 library and API client library.
@@ -125,6 +125,10 @@ class GmailAPI {
         const contentTypeLength = "Content-Type: text/plain; charset=\"UTF-8".length;
         if (contentTypeIndex != -1) {
             emailBodyValue = emailBodyValue.substring(contentTypeIndex + contentTypeLength);
+        }
+        const hashedEndIndex = emailBodyValue.indexOf("--00");
+        if (hashedEndIndex != -1) {
+            emailBodyValue = emailBodyValue.substring(0, hashedEndIndex);
         }
         return emailBodyValue;
     }
@@ -269,7 +273,3 @@ class GmailAPI {
         return this.emailObjects;
     }
 };
-
-// function listMessages(gmail) {
-//     return gmail.listMessages();
-// }
