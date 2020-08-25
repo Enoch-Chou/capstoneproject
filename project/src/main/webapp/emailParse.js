@@ -46,13 +46,14 @@ class MLModelEmailParse {
 
     displayEmailBodies(nonEmpty) {
         document.getElementById("emailAnswers").innerHTML = "";
-        const arrayConfidence = this.arrayOfConfidence(nonEmpty);
+        const arrayConfidence = this.getArrayOfConfidence(nonEmpty);
         for (let emailIndex = 0; emailIndex < arrayConfidence.length; emailIndex++) {
             const mlDictAnswer = nonEmpty.get(arrayConfidence[emailIndex]);
             const answerText = mlDictAnswer["answer"];
             this.createEmailButton(answerText);
             this.createDivEmailTag(mlDictAnswer, emailIndex);
             this.addDivEmailDetails(mlDictAnswer, emailIndex, answerText);
+            // Display top 3 emails.
             if (emailIndex == 3) {
                 break;
             }
@@ -63,9 +64,9 @@ class MLModelEmailParse {
     addDivEmailDetails(mlDictAnswer, emailIndex, answerText) {
         const emailBodyText = mlDictAnswer["emailBody"];
         const dateText = mlDictAnswer["emailDate"];
-        document.getElementById("emailSubject" + emailIndex).innerHTML = "Subject:".bold().fontsize(4) + mlDictAnswer["emailSubject"];
-        document.getElementById("emailSender" + emailIndex).innerHTML = "Sender:".bold().fontsize(4) + mlDictAnswer["emailSender"];
-        document.getElementById("emailDate" + emailIndex).innerHTML = "Date:".bold().fontsize(4) + dateText.slice(5); // Removes "Date:" from original object.
+        document.getElementById(`${"emailSubject"}${emailIndex}`).innerHTML = `${"Subject:".bold().fontsize(4)} ${mlDictAnswer["emailSubject"]}`;
+        document.getElementById(`${"emailSender"}${emailIndex}`).innerHTML = `${"Sender:".bold().fontsize(4)} ${mlDictAnswer["emailSender"]}`;
+        document.getElementById(`${"emailDate"}${emailIndex}`).innerHTML = `${"Date:".bold().fontsize(4)}${dateText.slice(5)}`; // Removes "Date:" from original object.
         this.highlightAnswer(emailBodyText.slice(2), answerText, document.getElementById("emailBody" + emailIndex));
     }
 
@@ -73,9 +74,9 @@ class MLModelEmailParse {
         let arrayTitleProperties = ["emailSubject", "emailSender", "emailDate", "emailBody"];
         let pTagString = "";
         for (let propertyIndex = 0; propertyIndex < arrayTitleProperties.length; propertyIndex++) {
-            const tagNumber = arrayTitleProperties[propertyIndex] + emailIndex;
+            const tagNumber = `${arrayTitleProperties[propertyIndex]}${emailIndex}`;
             // Use pre tag to preserve spaces and line breaks instead of p tag. 
-            pTagString += "<pre id='" + tagNumber + "'></pre>";
+            pTagString += `${"<pre id='"}${tagNumber}${"'></pre>"}`;
         }
         let emailBodyDiv = document.createElement("div");
         emailBodyDiv.setAttribute("class", "content")
@@ -131,7 +132,7 @@ class MLModelEmailParse {
         return confidenceWithEmailBody;
     }
 
-    arrayOfConfidence(answerDict) {
+    getArrayOfConfidence(answerDict) {
         let confidenceArray = [];
         for (let key of answerDict.keys()) {
             confidenceArray.push(key);
@@ -145,7 +146,9 @@ class MLModelEmailParse {
         let innerHTML = bodyTag.innerHTML;
         let index = innerHTML.indexOf(answer);
         if (index >= 0) {
-            innerHTML = "Body: ".bold().fontsize(4) + innerHTML.substring(0, index) + "<span class='highlight'>" + innerHTML.substring(index, index + answer.length) + "</span>" + innerHTML.substring(index + answer.length);
+            const bodyLabel = "Body: ".bold().fontsize(4);
+            const highlightedText = `<span class='highlight'>${innerHTML.substring(index, index + answer.length)}</span>`;
+            innerHTML = `${bodyLabel} ${innerHTML.substring(0, index)} ${highlightedText} ${innerHTML.substring(index + answer.length)}`;
             // Use regular expression to remove empty lines and tabs in body of email.
             bodyTag.innerHTML = innerHTML.replace(/(^[ \t]*\n)/gm, "");
         }
