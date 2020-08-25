@@ -64,9 +64,9 @@ class MLModelEmailParse {
     addDivEmailDetails(mlDictAnswer, emailIndex, answerText) {
         const emailBodyText = mlDictAnswer["emailBody"];
         const dateText = mlDictAnswer["emailDate"];
-        document.getElementById(`${"emailSubject"}${emailIndex}`).innerHTML = `${"Subject:".bold().fontsize(4)} ${mlDictAnswer["emailSubject"]}`;
-        document.getElementById(`${"emailSender"}${emailIndex}`).innerHTML = `${"Sender:".bold().fontsize(4)} ${mlDictAnswer["emailSender"]}`;
-        document.getElementById(`${"emailDate"}${emailIndex}`).innerHTML = `${"Date:".bold().fontsize(4)}${dateText.slice(5)}`; // Removes "Date:" from original object.
+        document.getElementById(`emailSubject${emailIndex}`).innerHTML = `${"Subject:".bold().fontsize(4)} ${mlDictAnswer["emailSubject"]}`;
+        document.getElementById(`emailSender${emailIndex}`).innerHTML = `${"Sender:".bold().fontsize(4)} ${mlDictAnswer["emailSender"]}`;
+        document.getElementById(`emailDate${emailIndex}`).innerHTML = `${"Date:".bold().fontsize(4)}${dateText.slice(5)}`; // Removes "Date:" from original object.
         this.highlightAnswer(emailBodyText.slice(2), answerText, document.getElementById("emailBody" + emailIndex));
     }
 
@@ -76,7 +76,7 @@ class MLModelEmailParse {
         for (let propertyIndex = 0; propertyIndex < arrayTitleProperties.length; propertyIndex++) {
             const tagNumber = `${arrayTitleProperties[propertyIndex]}${emailIndex}`;
             // Use pre tag to preserve spaces and line breaks instead of p tag. 
-            pTagString += `${"<pre id='"}${tagNumber}${"'></pre>"}`;
+            pTagString += `<pre id='${tagNumber}'></pre>`;
         }
         let emailBodyDiv = document.createElement("div");
         emailBodyDiv.setAttribute("class", "content")
