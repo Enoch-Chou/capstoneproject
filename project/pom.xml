@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.google.sps</groupId>
-  <artifactId>capstoneproject</artifactId>
+  <artifactId>gersa-284622</artifactId>
   <version>1</version>
   <packaging>war</packaging>
 
@@ -35,7 +35,7 @@
         <version>2.2.0</version>
         <configuration>
           <!-- TODO: set project ID. -->
-          <deploy.projectId>YOUR_PROJECT_ID_HERE</deploy.projectId>
+          <deploy.projectId>gersa-284622</deploy.projectId>
           <deploy.version>1</deploy.version>
         </configuration>
       </plugin>
