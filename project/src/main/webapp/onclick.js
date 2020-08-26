@@ -1,4 +1,4 @@
-function onclick() {
+function searchMessages() {
     const query = getQuery();
     if (query.length == 0) {
         console.log("Please enter a question!");
