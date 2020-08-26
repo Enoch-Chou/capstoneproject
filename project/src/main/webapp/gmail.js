@@ -12,6 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Adds a random greeting to the page.
+ */
+function addRandomGreeting() {
+    const greetings =
+        ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+
+    // Pick a random greeting.
+    const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+
+    // Add it to the page.
+    const greetingContainer = document.getElementById('greeting-container');
+    greetingContainer.innerText = greeting;
+}
+
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
@@ -20,15 +35,22 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/res
 // included, separated by spaces.
 var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
+
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
-//let emailObjects = {};
 
 /**
-  * On load, called to load the auth2 library and API client library.
+  *  On load, called to load the auth2 library and API client library.
   */
 function handleClientLoad() {
     gapi.load('client:auth2', initClient);
+}
+
+/**
+  *  Sign out the user upon button click.
+  */
+function handleSignoutClick(event) {
+    gapi.auth2.getAuthInstance().signOut();
 }
 
 /**
@@ -62,6 +84,8 @@ function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
+        // getMessage();
+        //listMessages();
     } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
@@ -75,37 +99,17 @@ function handleAuthClick(event) {
     gapi.auth2.getAuthInstance().signIn();
 }
 
-/**
-  *  Sign out the user upon button click.
-  */
-function handleSignoutClick(event) {
-    gapi.auth2.getAuthInstance().signOut();
-}
-
-/**
-  * Append a pre element to the body containing the given message
-  * as its text node. Used to display the results of the API call.
-  *
-  * @param {string} message Text to be placed in pre element.
-  */
-function appendPre(message) {
-    var pre = document.getElementById('content');
-    var textContent = document.createTextNode(message + '\n');
-    pre.appendChild(textContent);
-}
-
 //Get the gmail search query from the front end
 function getQuery() {
     const query = document.getElementById("text-input").value;
     return query;
 }
 
-class gmailAPI {
+class GmailAPI {
     question;
     emailObject
 
-    constructor(question) {
-        this.question = question;
+    constructor() {
         this.emailObjects = {};
     }
 
@@ -193,8 +197,9 @@ class gmailAPI {
     }
 
     //Retrieve messages using hardcoded queries and the signed-in email.
-    listMessages() {
+    listMessages(question) {
         this.emailObjects = {};
+        this.question = question;
         const listMessagePromise = new Promise((resolve) => {
             const promiseArray = [];
             var getPageOfMessages = (request, result) => {
@@ -239,7 +244,3 @@ class gmailAPI {
         return this.emailObjects;
     }
 };
-
-function listMessages(gmail) {
-    return gmail.listMessages();
-}

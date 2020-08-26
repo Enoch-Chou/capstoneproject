@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<title>Capstone Project</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,23 +17,27 @@
 	<script src="maps.js"></script>
 </head>
 
-<body>
-	<h1>MVP Demo</h1>
-	<button id="authorize_button" style="display: none;">Authorize</button>
+<body><center>
+	<br/><br/>
+    <a href="feedback.html">Click this tab to give us feedback!</a>
+    <button id="authorize_button" style="display: none;">Authorize</button>
 	<button id="signout_button" style="display: none;">Sign Out</button>
+    <br/>
+	<h1>MVP Demo</h1>
 
 	<pre id="content" style="white-space: pre-wrap;"></pre>
 
 	<script type="text/javascript" src="gmail.js"></script>
 	<script src="emailParse.js"></script>
 	<script src="onLoadParse.js"></script>
-	<script src="main.js"></script>
+
+	<script src="onclick.js"></script>
 
 	<h3>Ask a question about your inbox</h3>
 	<textarea id="text-input"></textarea>
 	<br/><br/>
 
-	<button onclick="main()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
+	<button onclick="searchMessages()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
 
     <div id="answer"></div>
 
@@ -45,7 +48,7 @@
 	<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
 		onreadystatechange="if (this.readyState === 'complete') this.onload()">
 	</script>
-	<div id="modelLoad"></div>
+	<div id="emailAnswers"></div>
+  <br/><br/>
 </body>
-
 </html>
