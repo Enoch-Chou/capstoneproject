@@ -15,36 +15,19 @@
 /**
  * Adds a random greeting to the page.
  */
-function addRandomGreeting() {
-    const greetings =
-        ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-    // Pick a random greeting.
-    const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-    // Add it to the page.
-    const greetingContainer = document.getElementById('greeting-container');
-    greetingContainer.innerText = greeting;
-}
-
-
-// Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
-
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
 
-/**
-  *  On load, called to load the auth2 library and API client library.
-  */
-function handleClientLoad() {
-    gapi.load('client:auth2', initClient);
-}
+// Array of API discovery doc URLs for APIs used by the quickstart
+var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+
+
+// Authorization scopes required by the API; multiple scopes can be
+// included, separated by spaces.
+var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+
 
 /**
   *  Sign out the user upon button click.
@@ -91,12 +74,34 @@ function updateSigninStatus(isSignedIn) {
         signoutButton.style.display = 'none';
     }
 }
+/**
+  *  On load, called to load the auth2 library and API client library.
+  */
+function handleClientLoad() {
+    gapi.load('client:auth2', initClient);
+}
 
 /**
-  *  Sign in the user upon button click.
+  *  Initializes the API client library and sets up sign-in state
+  *  listeners.
   */
-function handleAuthClick(event) {
-    gapi.auth2.getAuthInstance().signIn();
+function initClient() {
+    gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES
+    }).then(function() {
+        // Listen for sign-in state changes.
+        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+        // Handle the initial sign-in state.
+        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        authorizeButton.onclick = handleAuthClick;
+        signoutButton.onclick = handleSignoutClick;
+    }, function(error) {
+        appendPre(JSON.stringify(error, null, 2));
+    });
 }
 
 //Get the gmail search query from the front end
@@ -146,7 +151,7 @@ class GmailAPI {
 
     /**
       * Checks if the email is a valid email
-      * 
+      *
       * Criteria 1: Isn't a Daily Insider message - breaks ML model
       * Criteria 2: Isn't an empty email
       * Criteria 3: Isn't a google chat message
