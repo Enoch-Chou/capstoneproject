@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+/* Perform API calls to Datamuse word-finding API to identify keywords.*/
 @WebServlet("/datamuse")
 public class DatamuseServlet extends HttpServlet {
 
