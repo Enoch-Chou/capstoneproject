@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Feedback</title>
+  </head>
+  <body>
+      <h1>Feedback</h1>
+      <p>Enter feedback on product experience here:</p>
+      <form id = 'comment-form' class = "hidden" action = "/comment" method = "POST">
+        <p>Enter a comment:</p>
+        <textarea name="text-input">Here</textarea>
+        <input type = "submit" />
+        <br/><br/>
+      </form>
+      <br></br>
+      <form id = 'maxComments' action='/comment'>
+        <input type="submit" name = "Display Comments">
+      </form>
+  </body>
+</html>
