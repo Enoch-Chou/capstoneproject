@@ -37,7 +37,7 @@ class MLModelEmailParse {
                     answer.innerHTML = "No Answer Available";
                 }
                 else {
-                    this.displayEmailBodies(nonEmpty,answer);
+                    this.displayEmailBodies(nonEmpty, answer);
                     console.timeEnd("Using Promises Test");
                     initMap();
                 }
@@ -45,7 +45,7 @@ class MLModelEmailParse {
         });
     }
 
-    displayEmailBodies(nonEmpty,answer) {
+    displayEmailBodies(nonEmpty, answer) {
         document.getElementById("emailAnswers").innerHTML = "";
         const arrayConfidence = this.getArrayOfConfidence(nonEmpty);
         for (let emailIndex = 0; emailIndex < arrayConfidence.length; emailIndex++) {
@@ -151,10 +151,20 @@ class MLModelEmailParse {
         if (index >= 0) {
             const bodyLabel = "Body: ".bold().fontsize(4);
             const highlightedText = `<span class='highlight'>${innerHTML.substring(index, index + answer.length)}</span>`;
-            innerHTML = `${bodyLabel} ${innerHTML.substring(0, index)} ${highlightedText} ${innerHTML.substring(index + answer.length)}`;
+            innerHTML = `${bodyLabel} ${innerHTML.substring(0, index)}${highlightedText}${innerHTML.substring(index + answer.length)}`;
+            let emailWithoutHashCode = this.removeHashCode(innerHTML);
             // Use regular expression to remove empty lines and tabs in body of email.
-            bodyTag.innerHTML = innerHTML.replace(/(^[ \t]*\n)/gm, "");
+            bodyTag.innerHTML = emailWithoutHashCode.replace(/(^[ \t]*\n)/gm, "");
         }
+    }
+
+    removeHashCode(innerHTML) {
+        let noHash = innerHTML;
+        const hashedStartIndex = innerHTML.indexOf("--00");
+        if (hashedStartIndex >= 0) {
+            noHash = innerHTML.substring(0, hashedStartIndex);
+        }
+        return noHash;
     }
 
     allowCollapse() {
@@ -172,6 +182,7 @@ class MLModelEmailParse {
         }
     }
 }
+
 
 // test for Jasmine
 module.exports = {
