@@ -14,101 +14,124 @@
 
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+// var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
 
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+// // Authorization scopes required by the API; multiple scopes can be
+// // included, separated by spaces.
+// var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
-var authorizeButton = document.getElementById('authorize_button');
-var signoutButton = document.getElementById('signout_button');
+// var authorizeButton = document.getElementById('authorize_button');
+// var signoutButton = document.getElementById('signout_button');
+// const currAccountContainer = document.getElementById("account-container");
 
 
-/**
-  * On load, called to load the auth2 library and API client library.
-  */
-function handleClientLoad() {
-    gapi.load('client:auth2', initClient);
-}
 
-/**
-  *  Initializes the API client library and sets up sign-in state
-  *  listeners.
-  */
-function initClient() {
-    gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES
-    }).then(function() {
-        // Listen for sign-in state changes.
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+// async function keywordExtraction(userInput) {
+//     var result = "";
+//     var count = 0;
+//     var searchQuery = userInput.split(" ");
+//     for (word of searchQuery){
+//         if ((searchQuery.length-1) == count && word.indexOf('?') != -1) {
+//                 word = word.substring(0, word.length-1);
+//             }
+//         var url = new URL("https://api.datamuse.com/words?md=p&sp=" + word + "&max=1");
+//         const output = await fetch(url).then(response => response.text());
+//         if (output.includes("[\"n\"]") == true || output.includes("[\"adj\"]") == true){
+//             result += word;
+//             if (count != (searchQuery.length-1)){
+//                 result += " ";
+//             }
+//         }
+//         count++;
+//     }
+//     return result;
+// }
 
-        // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        authorizeButton.onclick = handleAuthClick;
-        signoutButton.onclick = handleSignoutClick;
-    }, function(error) {
-        appendPre(JSON.stringify(error, null, 2));
-    });
-}
+// /**
+//   * On load, called to load the auth2 library and API client library.
+//   */
+// function handleClientLoad() {
+//     gapi.load('client:auth2', initClient);
+// }
 
-/**
-  *  Called when the signed in status changes, to update the UI
-  *  appropriately. After a sign-in, the API is called.
-  */
-function updateSigninStatus(isSignedIn) {
-    if (isSignedIn) {
-        console.log(gapi.auth2.getAuthInstance().currentUser.get().rt.$t);
-        authorizeButton.style.display = 'none';
-        signoutButton.style.display = 'block';
-    } else {
-        authorizeButton.style.display = 'block';
-        signoutButton.style.display = 'none';
-    }
-}
+// /**
+//   *  Initializes the API client library and sets up sign-in state
+//   *  listeners.
+//   */
+// function initClient() {
+//     gapi.client.init({
+//         apiKey: API_KEY,
+//         clientId: CLIENT_ID,
+//         discoveryDocs: DISCOVERY_DOCS,
+//         scope: SCOPES
+//     }).then(function() {
+//         // Listen for sign-in state changes.
+//         gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
-/**
-  *  Sign in the user upon button click.
-  */
-function handleAuthClick(event) {
-    gapi.auth2.getAuthInstance().signIn();
-}
+//         // Handle the initial sign-in state.
+//         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+//         authorizeButton.onclick = handleAuthClick;
+//         signoutButton.onclick = handleSignoutClick;
+//     }, function(error) {
+//         appendPre(JSON.stringify(error, null, 2));
+//     });
+// }
 
-/**
-  *  Sign out the user upon button click.
-  */
-function handleSignoutClick(event) {
-    gapi.auth2.getAuthInstance().signOut();
-}
+// /**
+//   *  Called when the signed in status changes, to update the UI
+//   *  appropriately. After a sign-in, the API is called.
+//   */
+// function updateSigninStatus(isSignedIn) {
+//     if (isSignedIn) {
+//         currAccountContainer.innerHTML = gapi.auth2.getAuthInstance().currentUser.get().rt.$t;
+//         authorizeButton.style.display = 'none';
+//         signoutButton.style.display = 'block';
+//     } else {
+//         authorizeButton.style.display = 'block';
+//         signoutButton.style.display = 'none';
+//     }
+// }
 
-/**
-  * Append a pre element to the body containing the given message
-  * as its text node. Used to display the results of the API call.
-  *
-  * @param {string} message Text to be placed in pre element.
-  */
-function appendPre(message) {
-    var pre = document.getElementById('content');
-    var textContent = document.createTextNode(message + '\n');
-    pre.appendChild(textContent);
-}
+// /**
+//   *  Sign in the user upon button click.
+//   */
+// function handleAuthClick(event) {
+//     gapi.auth2.getAuthInstance().signIn();
+// }
 
-//Get the gmail search query from the front end
-function getQuery() {
-    const query = document.getElementById("text-input").value;
-    return query;
-}
+// /**
+//   *  Sign out the user upon button click.
+//   */
+// function handleSignoutClick(event) {
+//     gapi.auth2.getAuthInstance().signOut();
+// }
+
+// /**
+//   * Append a pre element to the body containing the given message
+//   * as its text node. Used to display the results of the API call.
+//   *
+//   * @param {string} message Text to be placed in pre element.
+//   */
+// function appendPre(message) {
+//     var pre = document.getElementById('content');
+//     var textContent = document.createTextNode(message + '\n');
+//     pre.appendChild(textContent);
+// }
+
+// //Get the gmail search query from the front end
+// function getQuery() {
+//     const query = document.getElementById("text-input").value;
+//     return query;
+// }
 
 class GmailAPI {
-    emailObject;
-    question;
-
     constructor() {
         this.emailObjects = {};
     }
 
+    getQuery() {
+        this.question = document.getElementById("text-input").value;
+    }
 
     getEmailBody(decodedEmail) {
         const emailBodyStartIndex = decodedEmail.indexOf("Content-Type: text/plain; charset=\"UTF-8\"");
@@ -118,17 +141,14 @@ class GmailAPI {
             emailBodyValue = emailBodyValue.substring(0, emailBodyValue.indexOf("Forwarded message"));
         }
         const quotedPrintableIndex = emailBodyValue.indexOf("quoted-printable");
+        const quotedPrintableLength = "quoted-printable".length;
         if (quotedPrintableIndex != -1) {
-            emailBodyValue = emailBodyValue.substring(quotedPrintableIndex + 16);
+            emailBodyValue = emailBodyValue.substring(quotedPrintableIndex + quotedPrintableLength);
         }
         const contentTypeIndex = emailBodyValue.indexOf("Content-Type: text/plain; charset=\"UTF-8");
         const contentTypeLength = "Content-Type: text/plain; charset=\"UTF-8".length;
         if (contentTypeIndex != -1) {
             emailBodyValue = emailBodyValue.substring(contentTypeIndex + contentTypeLength);
-        }
-        const hashedEndIndex = emailBodyValue.indexOf("--00");
-        if (hashedEndIndex != -1) {
-            emailBodyValue = emailBodyValue.substring(0, hashedEndIndex);
         }
         return emailBodyValue;
     }
@@ -216,7 +236,7 @@ class GmailAPI {
                     this.emailObjects[messageID] = {
                         emailDate: emailDateValue,
                         emailBody: emailBodyValue,
-                        emailSender: emailSenderValue, 
+                        emailSender: emailSenderValue,
                         emailSubject: emailSubjectValue
                     };
                 }
@@ -227,15 +247,11 @@ class GmailAPI {
     }
 
     //Retrieve messages using hardcoded queries and the signed-in email.
-    listMessages(question) {
+    listMessages() {
         this.emailObjects = {};
-        this.question = getQuery();
-        // if (this.question === "") {
-        //     console.log("Please enter something!");
-        // }
         const listMessagePromise = new Promise((resolve) => {
             const promiseArray = [];
-            var getPageOfMessages = (request, result) => {
+            let getPageOfMessages = (request, result) => {
                 request.execute(resp => {
                     result = result.concat(resp.messages);
                     var nextPageToken = resp.nextPageToken;
@@ -262,14 +278,51 @@ class GmailAPI {
                 'q': this.question
             });
             getPageOfMessages(initialRequest, []);
+            return Promise.all(promiseArray);
         });
         return listMessagePromise;
     }
 
-    get question() {
-        return this.question;
-    }
-    get totalObjects() {
-        return this.emailObjects;
+    //Retrieve messages using hardcoded queries and the signed-in email.
+    listMessagesWithExtraction() {
+        this.emailObjects = {};
+        console.log("Current Question:", this.question);
+        // keywordExtraction(this.question).then(value => {});
+        const listMessagePromise = new Promise((resolve) => {
+            keywordExtraction(this.question).then(value => {
+                const promiseArray = [];
+                var getPageOfMessages = (request, result) => {
+                    request.execute(resp => {
+                        result = result.concat(resp.messages);
+                        var nextPageToken = resp.nextPageToken;
+                        if (nextPageToken) {
+                            request = gapi.client.gmail.users.messages.list({
+                                'userId': 'me',
+                                'pageToken': nextPageToken,
+                                'q': value
+                            });
+                            getPageOfMessages(request, result);
+                        } else {
+                            for (var i = 0; i < result.length; i++) {
+                                if (this.hasEmails(result)) {
+                                    promiseArray.push(this.getMessage(result[i].id));
+                                }
+                                else {
+
+                                }
+                            }
+                            Promise.all(promiseArray).then(() => resolve()
+                            );
+                        }
+                    });
+                };
+                var initialRequest = gapi.client.gmail.users.messages.list({
+                    'userId': 'me',
+                    'q': value
+                });
+                getPageOfMessages(initialRequest, []);
+            });
+        });
+        return listMessagePromise;
     }
 };
