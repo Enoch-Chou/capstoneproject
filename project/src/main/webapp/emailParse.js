@@ -160,7 +160,7 @@ class MLModelEmailParse {
 
     removeHashCode(innerHTML) {
         let noHash = innerHTML;
-        const hashedStartIndex = innerHTML.indexOf("--00");
+        const hashedStartIndex = innerHTML.lastIndexOf("--00");
         if (hashedStartIndex >= 0) {
             noHash = innerHTML.substring(0, hashedStartIndex);
         }
