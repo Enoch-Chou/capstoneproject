@@ -4,51 +4,54 @@
 	<title>Capstone Project</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+	<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.6/lib/darkmode-js.min.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.lime-blue.min.css" />
 	<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"></script>
 	<script type="text/javascript" src="api_key.js"></script>
 	<script type="text/javascript" src="client_id.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxHHs59d9_IxH3YGpyzwSkA54Uho0uneU&libraries=places">
 	</script>
+	<link rel="stylesheet" href="style.css">
 	<script src="search.js"></script>
 	<script src="keyword.js"></script>
 	<script src="maps.js"></script>
 </head>
 
-<body><center>
-	<br/><br/>
-    <a href="feedback.html">Click this tab to give us feedback!</a>
-    <button id="authorize_button" style="display: none;">Authorize</button>
-	<button id="signout_button" style="display: none;">Sign Out</button>
-    <br/>
-	<h1>MVP Demo</h1>
+<body>
+	<center>
+		<br/><br/>
+		<script src="darkmode.js"></script>
+		<a href="feedback.html">Click this tab to give us feedback!</a>
+		<div id="account-container" style="text-align: right;"></div>
+		<button id="authorize_button" style="display: none; float: right;">Authorize</button>
+		<button id="signout_button" style="display: none; float: right;">Sign Out</button>
+		<br/>
+		<h1>Gmail Enhanced Search Retrieval Application</h1>
 
 
-	<pre id="content" style="white-space: pre-wrap;"></pre>
+		<pre id="content" style="white-space: pre-wrap;"></pre>
 
-	<script type="text/javascript" src="gmail.js"></script>
-	<script src="emailParse.js"></script>
-	<script src="onLoadParse.js"></script>
-	<script src="onclick.js"></script>
+		<script type="text/javascript" src="gmail.js"></script>
+		<script src="emailParse.js"></script>
+		<script src="onLoadParse.js"></script>
+		<script src="searchMessages.js"></script>
 
-	<h3>Ask a question about your inbox</h3>
-	<textarea id="text-input"></textarea>
-	<br/><br/>
+		<h3>Ask a question about your inbox</h3>
+		<textarea id="text-input"></textarea>
+		<br/><br/>
 
-	<button onclick="onclick()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
+		<button onclick="searchMessages()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
 
-    <div id="answer"></div>
+		<div id="displayAnswer"></div>
+		<div id="type"></div>
+		<div id="map" style="width: 400px; height: 400px"></div>
+		<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+			onreadystatechange="if (this.readyState === 'complete') this.onload()">
+		</script>
+		<div id="emailAnswers"></div>
+		<br/><br/>
 
-	<div id="displayAnswer"></div>
-	<div id="type"></div>
-	<div id="map" style="width: 400px; height: 400px"></div>
-
-	<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
-		onreadystatechange="if (this.readyState === 'complete') this.onload()">
-	</script>
-	<div id="emailAnswers"></div>
-  <br/><br/>
 </body>
 </html>
