@@ -79,33 +79,9 @@ function handleClientLoad() {
     gapi.load('client:auth2', initClient);
 }
 
-/**
-  *  Initializes the API client library and sets up sign-in state
-  *  listeners.
-  */
-function initClient() {
-    gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES
-    }).then(function() {
-        // Listen for sign-in state changes.
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
-        // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        authorizeButton.onclick = handleAuthClick;
-        signoutButton.onclick = handleSignoutClick;
-    }, function(error) {
-        appendPre(JSON.stringify(error, null, 2));
-    });
-}
-
-//Get the gmail search query from the front end
+/** Get the gmail search query from the front end. */
 function getQuery() {
-    const query = document.getElementById("text-input").value;
-    return query;
+    return document.getElementById("text-input").value;
 }
 
 class GmailAPI {
@@ -168,7 +144,7 @@ class GmailAPI {
     }
 
     getEmailObjects() {
-        console.log(this.emailObjects);
+        return this.emailObject;
     }
 
     /**
@@ -184,7 +160,7 @@ class GmailAPI {
                 'format': "raw"
             });
             messageRequest.execute(response => {
-                //Convert from base64 encoding to text.
+                // Convert from base64 encoding to text.
                 const decodedEmail = atob(response.raw.replace(/-/g, '+').replace(/_/g, '/'));
                 const emailBodyValue = this.getEmailBody(decodedEmail);
                 const emailDateValue = this.getEmailDate(decodedEmail);
@@ -192,14 +168,13 @@ class GmailAPI {
                 if (this.isActualEmail(emailBodyValue, emailDateValue)) {
                     this.emailObjects[messageID] = { emailDate: emailDateValue, emailBody: emailBodyValue };
                 }
-                this.getEmailObjects();
                 resolve();
             });
         });
         return getMessagePromise;
     }
 
-    //Retrieve messages using hardcoded queries and the signed-in email.
+    /** Retrieve messages using hardcoded queries and the signed-in email. */
     listMessages(question) {
         this.emailObjects = {};
         this.question = question;
@@ -218,15 +193,12 @@ class GmailAPI {
                         getPageOfMessages(request, result);
                     } else {
                         for (var i = 0; i < result.length; i++) {
-                            if (result[i] === undefined) {
-                                console.log("There are no messages from the query");
-                            }
-                            else {
+                            if (result[i] !== undefined) {
                                 promiseArray.push(this.getMessage(result[i].id));
                             }
                         }
                         Promise.all(promiseArray).then(() => resolve()
-                        ); //Promise.all and then this.resolve
+                        );
                     }
                 });
             };
@@ -236,14 +208,6 @@ class GmailAPI {
             });
             getPageOfMessages(initialRequest, []);
         });
-        console.log("The promise ended");
         return listMessagePromise;
-    }
-
-    get question() {
-        return this.question;
-    }
-    get totalObjects() {
-        return this.emailObjects;
     }
 };
