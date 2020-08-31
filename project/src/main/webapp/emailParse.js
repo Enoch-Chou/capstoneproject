@@ -22,13 +22,7 @@ class MLModelEmailParse {
     parseEmailsWithModel(gmail) {
         // class from Gmail API js file
         const { question, emailObjects } = gmail;
-<<<<<<< HEAD
-        console.log("Email Objects: ", emailObjects);
         const allPass = this.extractEmailBodiesToArray(emailObjects);
-        console.log("All Pass: ", allPass);
-=======
-        const allPass = this.extractEmailBodiesToArray(emailObjects);
->>>>>>> d511430ba90337c1942625d67dde8f1e14a2c247
         console.time("Using Promises Test");
         this.model.then(model => {
             const promises = allPass.map(
@@ -36,38 +30,22 @@ class MLModelEmailParse {
             );
             Promise.all(promises).then(values => {
                 const nonEmpty = this.getScoreToEmail(values, allPass, emailObjects);
-<<<<<<< HEAD
-                console.log("Values: ", values);
-                const answer = document.getElementById("displayAnswer");
-=======
                 const answer = document.getElementById("answer");
->>>>>>> d511430ba90337c1942625d67dde8f1e14a2c247
                 answer.innerHTML = '';
                 if (nonEmpty.size == 0) {
                     document.getElementById("emailAnswers").innerHTML = "";
                     answer.innerHTML = "No Answer Available";
                 }
                 else {
-<<<<<<< HEAD
-                    this.displayEmailBodies(nonEmpty, answer);
-                    console.timeEnd("Using Promises Test");
-                    // answer.innerHTML = mlDictAnswer["answer"];
-                    // answer.value = mlDictAnswer["answer"];
-=======
                     this.displayEmailBodies(nonEmpty,answer);
                     console.timeEnd("Using Promises Test");
->>>>>>> d511430ba90337c1942625d67dde8f1e14a2c247
                     initMap();
                 }
             });
         });
     }
 
-<<<<<<< HEAD
-    displayEmailBodies(nonEmpty, answer) {
-=======
     displayEmailBodies(nonEmpty,answer) {
->>>>>>> d511430ba90337c1942625d67dde8f1e14a2c247
         document.getElementById("emailAnswers").innerHTML = "";
         const arrayConfidence = this.getArrayOfConfidence(nonEmpty);
         for (let emailIndex = 0; emailIndex < arrayConfidence.length; emailIndex++) {
@@ -201,8 +179,4 @@ module.exports = {
     extractEmailBodiesToArray: MLModelEmailParse.extractEmailBodiesToArray,
     highestConfidence: MLModelEmailParse.highestConfidence,
     MLModelEmailParse: MLModelEmailParse
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> d511430ba90337c1942625d67dde8f1e14a2c247
