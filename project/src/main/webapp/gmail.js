@@ -73,6 +73,7 @@ class GmailAPI {
         return emailSenderValue;
     }
 
+    /** Checks if the query returns emails */
     hasEmails(emailList) {
         if (emailList[0] !== undefined) {
             return true;
@@ -134,7 +135,7 @@ class GmailAPI {
         return getMessagePromise;
     }
 
-    //Retrieve messages using hardcoded queries and the signed-in email.
+    /** Retrieve messages using hardcoded queries and the signed-in email. */
     listMessages() {
         this.emailObjects = {};
         const listMessagePromise = new Promise((resolve) => {
@@ -171,7 +172,7 @@ class GmailAPI {
         return listMessagePromise;
     }
 
-    //Retrieve messages using hardcoded queries and the signed-in email.
+    /**  Retrieve messages using hardcoded queries and the signed-in email. */
     listMessagesWithExtraction() {
         this.emailObjects = {};
         console.log("Current Question:", this.question);

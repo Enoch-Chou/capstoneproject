@@ -40,8 +40,6 @@ class GmailAuthorization {
 
             //Handle the initial sign-in state
             this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-            this.authorizeButton.onclick = this.handleAuthClick;
-            this.signoutButton.onclick = this.handleSignoutClick;
         }, function(error) {
             appendPre(JSON.stringify(error, null, 2));
         });
