@@ -5,11 +5,21 @@
 }
 
 .highlight {
-  background-color: yellow;
+	background-image: linear-gradient(#ffd900, #ffd900);
+	background-repeat: no-repeat;
+	background-position: 0% 100%;
+	background-size: 100% 2px;
+	transition: background-size .5s, background-position .3s ease-in .5s;
+}
+
+.highlight:hover {
+	background-size: 100% 100%;
+	background-position: 0% 0%;
+	transition: background-position .5s, background-size .3s ease-in .5s;
 }
 
 .active, .collapsible:hover {
-  background-color: #fc5d94;
+  background-color: #5494ff;
 } 
 
 .content {
@@ -20,30 +30,28 @@
   overflow: hidden;
   transition: max-height 0.2s ease-out;
   text-align: left;
-
 }
 
 .collapsible {
   position: relative;
-  background-color:#ff4081;
+  background-color: #448aff;
   border: none;
   font-size: 15px;
   color: #FFFFFF;
   padding: 18px;
-  width: 50%; 
+   width: 50%; 
   text-align: left;
   -webkit-transition-duration: 0.4s;
   transition-duration: 0.4s;
   text-decoration: none;
   overflow: hidden;
   cursor: pointer;
-
 }
 
-
+/* After selector allows click animation(ripple) with a lighter shade of the current button. */
 .collapsible:after {
   content: "";
-  background:#fc5d94;
+  background: #5494ff;
   display: block;
   position: absolute;
   padding-top: 300%;
@@ -54,12 +62,14 @@
   transition: all 0.8s
 }
 
+/* Active selector allows effect to take place onclick with specific opacity. */
 .collapsible:active:after {
   padding: 0;
   margin: 0;
   opacity: 1;
   transition: 0s
 }
+
 #emailAnswers {
   text-align: center;
 }
