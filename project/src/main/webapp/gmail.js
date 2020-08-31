@@ -202,4 +202,3 @@ function getMessage(userId, messageId, callback) {
   });
   request.execute(callback);
 }
-
