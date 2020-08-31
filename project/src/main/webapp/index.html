@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<title>Capstone Project</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,40 +17,38 @@
 	<script src="maps.js"></script>
 </head>
 
-<body>
-	<center>
-		<br/><br/>
-		<script type="text/javascript" src="gmail.js"></script>
-		<a href="feedback.html">Click this tab to give us feedback!</a>
-		<button id="authorize_button" style="display: none;">Authorize</button>
-		<button id="signout_button" style="display: none;">Sign Out</button>
-		<br/>
-		<h1>MVP Demo</h1>
+<body><center>
+	<br/><br/>
+    <a href="feedback.html">Click this tab to give us feedback!</a>
+    <button id="authorize_button" onclick="handleAuthClick()" style="display: none;">Authorize</button>
+	<button id="signout_button" onclick="handleSignoutClick()" style="display: none;">Sign Out</button>
+    <br/>
+	<h1>MVP Demo</h1>
 
 
-		<pre id="content" style="white-space: pre-wrap;"></pre>
+	<pre id="content" style="white-space: pre-wrap;"></pre>
 
-		<script src="emailParse.js"></script>
-		<script src="onLoadParse.js"></script>
+	<script type="text/javascript" src="gmail.js"></script>
+	<script src="emailParse.js"></script>
+	<script src="onLoadParse.js"></script>
 
-		<script src="searchMessages.js"></script>
+	<script src="searchMessages.js"></script>
 
-		<h3>Ask a question about your inbox</h3>
-		<textarea id="text-input"></textarea>
-		<br/><br/>
+	<h3>Ask a question about your inbox</h3>
+	<textarea id="text-input"></textarea>
+	<br/><br/>
 
-		<button onclick="searchMessages()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
-		<div id="answer"></div>
+	<button onclick="searchMessages()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">get answer!</button>
+    <div id="answer"></div>
 
-		<div id="displayAnswer"></div>
-		<div id="type"></div>
-		<div id="map" style="width: 400px; height: 400px"></div>
+	<div id="displayAnswer"></div>
+	<div id="type"></div>
+	<div id="map" style="width: 400px; height: 400px"></div>
 
-		<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
-			onreadystatechange="if (this.readyState === 'complete') this.onload()">
-		</script>
-		<div id="emailAnswers"></div>
-		<br/><br/>
+	<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+		onreadystatechange="if (this.readyState === 'complete') this.onload()">
+	</script>
+	<div id="emailAnswers"></div>
+  <br/><br/>
 </body>
-
 </html>

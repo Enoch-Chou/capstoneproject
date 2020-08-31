@@ -52,8 +52,6 @@ function initClient() {
 
         // Handle the initial sign-in state.
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        authorizeButton.onclick = handleAuthClick;
-        signoutButton.onclick = handleSignoutClick;
     }, function(error) {
         appendPre(JSON.stringify(error, null, 2));
     });
@@ -77,6 +75,14 @@ function updateSigninStatus(isSignedIn) {
   */
 function handleClientLoad() {
     gapi.load('client:auth2', initClient);
+}
+
+function handleAuthClick(event) {
+    gapi.auth2.getAuthInstance().signIn();
+}
+
+function handleSignoutClick(event) {
+    gapi.auth2.getAuthInstance().signOut();
 }
 
 /** Get the gmail search query from the front end. */
