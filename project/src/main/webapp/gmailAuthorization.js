@@ -29,10 +29,6 @@ class GmailAuthorization {
     }
 
     initClient() {
-        console.log(API_KEY);
-        console.log("Scopes: ", this.SCOPES);
-        console.log("Discovery docs: ", this.DISCOVERY_DOCS);
-        console.log("Client: ", CLIENT_ID);
         gapi.client.init({
             apiKey: API_KEY,
             clientId: CLIENT_ID,
