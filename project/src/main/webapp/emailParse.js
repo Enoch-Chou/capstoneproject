@@ -37,18 +37,21 @@ class MLModelEmailParse {
                     answer.innerHTML = "No Answer Available";
                 }
                 else {
-                    this.displayEmailBodies(nonEmpty);
+                    this.displayEmailBodies(nonEmpty,answer);
                     console.timeEnd("Using Promises Test");
+                    initMap();
                 }
             });
         });
     }
 
-    displayEmailBodies(nonEmpty) {
+    displayEmailBodies(nonEmpty,answer) {
         document.getElementById("emailAnswers").innerHTML = "";
         const arrayConfidence = this.getArrayOfConfidence(nonEmpty);
         for (let emailIndex = 0; emailIndex < arrayConfidence.length; emailIndex++) {
             const mlDictAnswer = nonEmpty.get(arrayConfidence[emailIndex]);
+            answer.innerHTML = mlDictAnswer["answer"];
+            answer.value = mlDictAnswer["answer"];
             const answerText = mlDictAnswer["answer"];
             this.createEmailButton(answerText);
             this.createDivEmailTag(mlDictAnswer, emailIndex);
