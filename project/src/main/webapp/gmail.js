@@ -138,12 +138,12 @@ class GmailAPI {
     /** Retrieve messages using hardcoded queries and the signed-in email. */
     listMessages() {
         this.emailObjects = {};
-        const listMessagePromise = new Promise((resolve) => {
+        return new Promise((resolve) => {
             const promiseArray = [];
-            let getPageOfMessages = (request, result) => {
+            const getPageOfMessages = (request, result) => {
                 request.execute(resp => {
                     result = result.concat(resp.messages);
-                    var nextPageToken = resp.nextPageToken;
+                    const nextPageToken = resp.nextPageToken;
                     if (nextPageToken) {
                         request = gapi.client.gmail.users.messages.list({
                             'userId': 'me',
@@ -169,7 +169,6 @@ class GmailAPI {
             getPageOfMessages(initialRequest, []);
             return Promise.all(promiseArray);
         });
-        return listMessagePromise;
     }
 
     /**  Retrieve messages using hardcoded queries and the signed-in email. */

@@ -51,6 +51,7 @@ class GmailAuthorization {
             this.authorizeButton.style.display = 'none';
             this.signoutButton.style.display = 'block';
         } else {
+            this.currAccountContainer.innerHTML = '';
             this.authorizeButton.style.display = 'block';
             this.signoutButton.style.display = 'none'
         }
