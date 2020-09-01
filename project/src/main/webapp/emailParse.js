@@ -30,10 +30,10 @@ class MLModelEmailParse {
             );
             Promise.all(promises).then(values => {
                 const nonEmpty = this.getScoreToEmail(values, allPass, emailObjects);
-                const answer = document.getElementById("answer");
+                const answer = document.getElementById("displayAnswer");
                 answer.innerHTML = '';
                 if (nonEmpty.size == 0) {
-                    document.getElementById("emailAnswers").innerHTML = "";
+                    document.getElementById("emailAnswers").innerHTML = ""; 
                     answer.innerHTML = "No Answer Available";
                 }
                 else {
