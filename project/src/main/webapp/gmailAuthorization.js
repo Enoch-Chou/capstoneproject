@@ -20,9 +20,11 @@ class GmailAuthorization {
     // included, separated by spaces.
     SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
 
-    authorizeButton = document.getElementById('authorize_button');
-    signoutButton = document.getElementById('signout_button');
-    currAccountContainer = document.getElementById("account-container");
+    constructor() {
+    this.authorizeButton = document.getElementById('authorize_button');
+    this.signoutButton = document.getElementById('signout_button');
+    this.currAccountContainer = document.getElementById("account-container");
+    }
 
     handleClientLoad() {
         gapi.load('client:auth2', () => this.initClient()); //use an arrow function to keep scope of this

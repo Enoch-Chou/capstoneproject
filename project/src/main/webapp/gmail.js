@@ -170,47 +170,4 @@ class GmailAPI {
             return Promise.all(promiseArray);
         });
     }
-
-    /**  Retrieve messages using hardcoded queries and the signed-in email. */
-    listMessagesWithExtraction() {
-        this.emailObjects = {};
-        console.log("Current Question:", this.question);
-        // keywordExtraction(this.question).then(value => {});
-        const listMessagePromise = new Promise((resolve) => {
-            keywordExtraction(this.question).then(value => {
-                const promiseArray = [];
-                var getPageOfMessages = (request, result) => {
-                    request.execute(resp => {
-                        result = result.concat(resp.messages);
-                        var nextPageToken = resp.nextPageToken;
-                        if (nextPageToken) {
-                            request = gapi.client.gmail.users.messages.list({
-                                'userId': 'me',
-                                'pageToken': nextPageToken,
-                                'q': value
-                            });
-                            getPageOfMessages(request, result);
-                        } else {
-                            for (var i = 0; i < result.length; i++) {
-                                if (this.hasEmails(result)) {
-                                    promiseArray.push(this.getMessage(result[i].id));
-                                }
-                                else {
-
-                                }
-                            }
-                            Promise.all(promiseArray).then(() => resolve()
-                            );
-                        }
-                    });
-                };
-                var initialRequest = gapi.client.gmail.users.messages.list({
-                    'userId': 'me',
-                    'q': value
-                });
-                getPageOfMessages(initialRequest, []);
-            });
-        });
-        return listMessagePromise;
-    }
 };
