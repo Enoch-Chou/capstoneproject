@@ -55,7 +55,7 @@ public class CommentServlet extends HttpServlet {
     }
     
     String json = convertToJsonUsingGson(comments);
-    response.setContentType("application/json");
+    response.setContentType("/thank-you-page.html");
     response.getWriter().println(json);
   }
 
@@ -74,7 +74,7 @@ public class CommentServlet extends HttpServlet {
       datastore.put(taskEntity);
 
       // Redirect back to the HTML page.
-      response.sendRedirect("/feedback.html");
+      response.sendRedirect("/thank-you-page.html");
   }
 
   /**
