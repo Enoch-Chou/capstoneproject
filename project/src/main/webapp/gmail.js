@@ -48,9 +48,9 @@ class GmailAPI {
     }
 
     getMessageID(decodedEmail) {
-        const MessageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
-        const MessageIDEndIndex = decodedEmail.substring(MessageIDStartIndex).indexOf("Subject:") + MessageIDStartIndex;
-        let emailDateValue = decodedEmail.substring(MessageIDStartIndex, MessageIDEndIndex);
+        const messageIDStartIndex = decodedEmail.indexOf("Message-ID:") + 12;
+        const messageIDEndIndex = decodedEmail.substring(messageIDStartIndex).indexOf("Subject:") + messageIDStartIndex;
+        let emailDateValue = decodedEmail.substring(messageIDStartIndex, messageIDEndIndex);
         if (emailDateValue.indexOf("X-Notifications") != -1) {
             emailDateValue = emailDateValue.substring(0, emailDateValue.indexOf("X-Notifications"));
         }

@@ -38,7 +38,8 @@ class GmailAuthorization {
             scope: this.SCOPES
         }).then(() => {
             // Listen for sign-in state changes.
-            gapi.auth2.getAuthInstance().isSignedIn.listen((isSignedIn) => this.updateSigninStatus(isSignedIn));
+            this.authInstance = gapi.auth2.getAuthInstance();
+            this.authInstance.isSignedIn.listen((isSignedIn) => this.updateSigninStatus(isSignedIn));
 
             //Handle the initial sign-in state
             this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
@@ -60,11 +61,11 @@ class GmailAuthorization {
     }
 
     handleAuthClick(event) {
-        gapi.auth2.getAuthInstance().signIn();
+        this.authInstance.signIn();
     }
 
     handleSignoutClick(event) {
-        gapi.auth2.getAuthInstance().signOut();
+        this.authInstance.signOut();
     }
 
     appendPre(message) {
