@@ -26,8 +26,8 @@
 		<script src="darkmode.js"></script>
 		<a href="feedback.html">Click this tab to give us feedback!</a>
 		<div id="account-container" style="text-align: right;"></div>
-		<button id="authorize_button" style="display: none; float: right;">Authorize</button>
-		<button id="signout_button" style="display: none; float: right;">Sign Out</button>
+		<button id="authorize_button" onclick="handleAuthClick()" style="display: none; float: right;">Authorize</button>
+		<button id="signout_button" onclick="handleSignoutClick()" style="display: none; float: right;">Sign Out</button>
 		<br/>
 		<h1>Gmail Enhanced Search Retrieval Application</h1>
 
@@ -48,12 +48,12 @@
 		<div id="displayAnswer"></div>
 		<div id="type"></div>
 		<div id="map" style="width: 400px; height: 400px"></div>
-
 		<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
 			onreadystatechange="if (this.readyState === 'complete') this.onload()">
 		</script>
 		<div id="emailAnswers"></div>
 		<br/><br/>
+
 </body>
 
 </html>
