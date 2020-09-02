@@ -3,11 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <title>Feedback</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
   </head>
+  
   <body>
       <h1>Feedback</h1>
-      <p>This page will be used to have submit feedback.</p>
+      <form id = 'comment-form' class = "hidden" action = "/comment" method = "POST">
+        <p>Enter feedback on product experience here:</p>
+        <textarea name="text-input">Here</textarea>
+        <input type = "submit" />
+        <br/><br/>
+      </form>
+      <br></br>
+      <a href = "index.html">Go back to main page.</a>
   </body>
 </html>
