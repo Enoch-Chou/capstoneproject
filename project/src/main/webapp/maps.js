@@ -1,30 +1,24 @@
-let map;
-let service;
-let infowindow;
-
 /* Utilize JavaScript Maps API and Places API to display an embedded map through a info window.*/
 function initMap() {
-    if (editedKeywordExtraction(document.getElementById('query').value) === 'Place'){
+    if (classifyQuestionType(document.getElementById('query').value) === 'Place'){
         document.getElementById("map").style.display = "block";
-        infowindow = new google.maps.InfoWindow();
-        map = new google.maps.Map(document.getElementById("map"), {
+        let infowindow = new google.maps.InfoWindow();
+        let map = new google.maps.Map(document.getElementById("map"), {
             center: google.maps.LatLng(-33.867, 151.195),
             zoom: 15
         });
 
-        console.log(document.getElementById('displayAnswer').value);
         var search = document.getElementById('displayAnswer').value;
-        console.log(search);
         const request = {
             query: search,
             fields: ["name", "geometry"]
         };
 
-        service = new google.maps.places.PlacesService(map);
+        let service = new google.maps.places.PlacesService(map);
         service.findPlaceFromQuery(request, (results, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (let i = 0; i < results.length; i++) {
-                createMarker(results[i]);
+                createMarker(results[i], map, infowindow);
             }
             map.setCenter(results[0].geometry.location);
             }
@@ -35,7 +29,7 @@ function initMap() {
 }
 
 /* Use Marker object to display marker in Google maps.*/
-function createMarker(place) {
+function createMarker(place, map, infowindow) {
     const marker = new google.maps.Marker({
         map,
         position: place.geometry.location
