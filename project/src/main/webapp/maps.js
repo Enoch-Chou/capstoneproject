@@ -2,7 +2,6 @@ let map;
 let service;
 let infowindow;
 
-/*Utilize JavaScript Maps API and Places API to create info window for embedded map.*/ 
 function initMap() {
     if (editedKeywordExtraction(document.getElementById('query').value) === 'Place'){
         document.getElementById("map").style.display = "block";
@@ -34,7 +33,6 @@ function initMap() {
     }
 }
 
-/* Use Marker object to display marker in Google maps.*/
 function createMarker(place) {
     const marker = new google.maps.Marker({
         map,

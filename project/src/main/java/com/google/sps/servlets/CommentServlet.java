@@ -41,23 +41,21 @@ public class CommentServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Integer numOfComments = Integer.parseInt(request.getParameter("numComments"));
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     PreparedQuery results = datastore.prepare(query);
     HashMap<String, String> comments = new HashMap<String, String>();
 
     int iter = 0;
     for (Entity entity : results.asIterable()) {
-        if (iter == numOfComments) break;
         String loadComment = (String) entity.getProperty("comment");
         String loadEmail = (String) entity.getProperty("email");
         long timestamp = (long) entity.getProperty("timestamp");
         comments.put(loadComment, loadEmail);
         iter++;
     }
-    
+
     String json = convertToJsonUsingGson(comments);
-    response.setContentType("application/json");
+    response.setContentType("/thank-you-page.html");
     response.getWriter().println(json);
   }
 
@@ -65,7 +63,7 @@ public class CommentServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String comment = request.getParameter("text-input");
       String userEmail = userService.getCurrentUser().getEmail();
-      
+
       long timestamp = System.currentTimeMillis();
 
       Entity taskEntity = new Entity("Comment");
@@ -76,7 +74,7 @@ public class CommentServlet extends HttpServlet {
       datastore.put(taskEntity);
 
       // Redirect back to the HTML page.
-      response.sendRedirect("/index.html");
+      response.sendRedirect("/thank-you-page.html");
   }
 
   /**
