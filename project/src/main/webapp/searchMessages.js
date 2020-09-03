@@ -1,10 +1,11 @@
 function searchMessages() {
-    const query = getQuery();
-    if (query.length == 0) {
-        console.log("Please enter a question!");
+    const gmail = new GmailAPI();
+    gmail.getQuery();
+    if (gmail.question === '') {
+        alert("Please enter a question!");
+        document.getElementById("map").style.display = "none";
         return;
     }
-    const gmail = new GmailAPI(query);
-    gmail.listMessages(query).then(() => mlClass.parseEmailsWithModel(gmail)
+    gmail.listMessages().then(() => mlClass.parseEmailsWithModel(gmail)
     );
 }
