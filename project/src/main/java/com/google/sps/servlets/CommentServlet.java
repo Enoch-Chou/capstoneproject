@@ -53,7 +53,7 @@ public class CommentServlet extends HttpServlet {
         comments.put(loadComment, loadEmail);
         iter++;
     }
-    
+
     String json = convertToJsonUsingGson(comments);
     response.setContentType("/thank-you-page.html");
     response.getWriter().println(json);
@@ -63,7 +63,7 @@ public class CommentServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
       String comment = request.getParameter("text-input");
       String userEmail = userService.getCurrentUser().getEmail();
-      
+
       long timestamp = System.currentTimeMillis();
 
       Entity taskEntity = new Entity("Comment");
