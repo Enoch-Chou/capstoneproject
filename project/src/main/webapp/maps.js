@@ -21,7 +21,7 @@ function initMap() {
                     createMarker(results[i], map, infowindow);
                 }
                 map.setCenter(results[0].geometry.location);
-                }
+            }
         });
     } else {
         document.getElementById("map").style.display = "none";
