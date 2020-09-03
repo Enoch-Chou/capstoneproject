@@ -1,2 +1,4 @@
 target/
 .idea
+/project/src/main/webapp/api_key.js
+/project/src/main/webapp/client_id.js
