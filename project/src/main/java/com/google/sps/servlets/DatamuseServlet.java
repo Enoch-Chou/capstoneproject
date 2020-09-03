@@ -13,19 +13,36 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
+/* Perform API calls to Datamuse word-finding API to identify keywords.*/
 @WebServlet("/datamuse")
 public class DatamuseServlet extends HttpServlet {
+  /* Determine part of speech for an individual word.*/
+  private void addToString(String[] splitQuery, String word, BufferedReader input, StringBuilder resultString, int count) {
+        StringBuilder output = new StringBuilder();
+        String line;
+        try {
+            while ((line = input.readLine()) != null) {
+                output.append(line);
+            }
+            String str =  output.toString();
+            if (str.contains("[\"n\"]") || str.contains("[\"adj\"]")){
+                resultString.append(word);
+                if (count != (splitQuery.length - 1)){
+                    resultString.append(" ");
+                }
+            }
+        } catch (Exception e)  { 
+                    System.out.println(e.getMessage()); 
+        }     
+  }
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ArrayList<String> resultList = new ArrayList<String>(); 
-        String query = request.getParameter("query");
-        String[] splitQuery = query.split(" ");
+  /* Check each word in search query for keyword status based on parts of speech.*/
+  private String buildKeywordString(String[] splitQuery) {
         int count = 0;
         StringBuilder resultString = new StringBuilder();
         for (String word: splitQuery){
-            if ((splitQuery.length-1) == count && word.indexOf('?') != -1) {
-                word = word.substring(0, word.length()-1);
+            if ((splitQuery.length - 1) == count && word.indexOf('?') != -1) {
+                word = word.substring(0, word.length() - 1);
             }
             
             try {
@@ -35,27 +52,23 @@ public class DatamuseServlet extends HttpServlet {
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
 
-                StringBuilder output;
+                
                 BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String line;
-                output = new StringBuilder();
+                addToString(splitQuery, word, output, input, resultString, count);
 
-                while ((line = input.readLine()) != null) {
-                    output.append(line);
-                }
-                String str =  output.toString();
-                if (str.contains("[\"n\"]") || str.contains("[\"adj\"]")){
-                    //resultList.add(word);
-                    resultString.append(word);
-                    if (count != (splitQuery.length-1)){
-                        resultString.append(" ");
-                    }
-                }
             } catch (Exception e)  { 
                     System.out.println(e.getMessage()); 
             }     
             count++;
         }    
-        response.getWriter().println(resultString);
+        return resultString.toString();
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String query = request.getParameter("query");
+        String[] splitQuery = query.split(" ");
+        String finalString = buildKeywordString(splitQuery);
+        response.getWriter().println(finalString);
    }
 }
