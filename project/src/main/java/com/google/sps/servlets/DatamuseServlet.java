@@ -18,7 +18,8 @@ import java.util.*;
 @WebServlet("/datamuse")
 public class DatamuseServlet extends HttpServlet {
   /* Determine part of speech for an individual word.*/
-  private void addToString(String[] splitQuery, String word, StringBuilder output, BufferedReader input, StringBuilder resultString, int count) {
+  private void addToString(String[] splitQuery, String word, BufferedReader input, StringBuilder resultString, int count) {
+        StringBuilder output = new StringBuilder();
         String line;
         try {
             while ((line = input.readLine()) != null) {
@@ -52,7 +53,7 @@ public class DatamuseServlet extends HttpServlet {
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Content-Type", "application/json");
 
-                StringBuilder output = new StringBuilder();
+                
                 BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 addToString(splitQuery, word, output, input, resultString, count);
 
